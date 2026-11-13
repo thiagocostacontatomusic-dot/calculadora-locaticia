@@ -206,7 +206,8 @@ button:disabled{opacity:0.6;cursor:progress}
   var MAX_FOTOS = 4;
   var TIPOS = ['Apartamento','Casa','Casa em condomínio','Cobertura','Studio / Kitnet','Sala comercial','Loja','Galpão'];
   var TEXTO_COND = 'Com adicionais de consumo individual da unidade (água, gás etc.).';
-  var GAR_SEGURO_PADRAO = 'Seguro contratado junto a uma seguradora, no lugar do fiador.';
+  var GAR_SEGURO_PADRAO = 'Seguro contratado junto a uma seguradora.';
+  var GAR_SEGURO_ANTIGO = 'Seguro contratado junto a uma seguradora, no lugar do fiador.';
   var GAR_TITULO_PADRAO = 'Título adquirido como garantia da locação, conforme as condições do título.';
   var IMOBILIARIA_PADRAO = 'Especiale Imóveis';
   var STORE_KEY = 'locaticia_perfil_v2';
@@ -605,6 +606,7 @@ button:disabled{opacity:0.6;cursor:progress}
       perfil.imobiliaria = (typeof p.imobiliaria === 'string' && p.imobiliaria) ? p.imobiliaria : IMOBILIARIA_PADRAO;
       perfil.garMostrar = p.garMostrar !== false;
       perfil.garSeguro = typeof p.garSeguro === 'string' ? p.garSeguro : GAR_SEGURO_PADRAO;
+      if(perfil.garSeguro === GAR_SEGURO_ANTIGO) perfil.garSeguro = GAR_SEGURO_PADRAO;
       perfil.garTitulo = typeof p.garTitulo === 'string' ? p.garTitulo : GAR_TITULO_PADRAO;
       imgs.foto = p.foto || '';
       imgs.logo = p.logo || '';
