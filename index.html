@@ -152,13 +152,6 @@ button:disabled{opacity:0.6;cursor:progress}
   </fieldset>
 
   <fieldset>
-    <legend>Destaques do imóvel (opcional)</legend>
-    <div class="field"><label for="destaques">Um item por linha</label>
-      <textarea id="destaques" placeholder="Varanda gourmet&#10;Mobiliado&#10;Ar-condicionado"></textarea>
-      <span class="hint">Até 8 itens. Pode deixar em branco, a seção some do PDF.</span></div>
-  </fieldset>
-
-  <fieldset>
     <legend>Fotos do imóvel (opcional)</legend>
     <div class="field"><label for="fotosFile">Até 4 fotos (a primeira é a capa)</label>
       <input type="file" id="fotosFile" accept="image/*" multiple>
@@ -202,7 +195,6 @@ button:disabled{opacity:0.6;cursor:progress}
   var TAXA_BANCARIA = 7;
   var PCT_FUNDO = 0.05;
   var PCT_SEGURO = 0.025;
-  var MAX_DESTAQUES = 8;
   var MAX_FOTOS = 4;
   var TIPOS = ['Apartamento','Casa','Casa em condomínio','Cobertura','Studio / Kitnet','Sala comercial','Loja','Galpão'];
   var TEXTO_COND = 'Com adicionais de consumo individual da unidade (água, gás etc.).';
@@ -280,7 +272,6 @@ button:disabled{opacity:0.6;cursor:progress}
       aluguel: parseBRL($('aluguel').value),
       iptu: parseBRL($('iptu').value),
       cond: parseBRL($('cond').value),
-      destaques: $('destaques').value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean).slice(0, MAX_DESTAQUES),
       consultor: perfil.consultor.trim(),
       imobiliaria: perfil.imobiliaria.trim(),
       garMostrar: perfil.garMostrar,
@@ -307,6 +298,12 @@ button:disabled{opacity:0.6;cursor:progress}
       D('flex:1;height:1px;background:' + GOLD) +
       D(SERIF + ';font-weight:600;font-size:15px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';white-space:nowrap', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
       D('flex:1;height:1px;background:' + GOLD));
+    if(n === 0){
+      return D('min-height:110px;max-height:320px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:20px;padding:0 24px',
+        D('flex:1;height:1px;background:' + GOLD) +
+        D(SERIF + ';font-weight:600;font-size:30px;letter-spacing:0.26em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
+        D('flex:1;height:1px;background:' + GOLD));
+    }
     /* Todas as fotos em 16:9 (sem achatar). O tamanho do conjunto acompanha a altura disponível (h). */
     var GAP = 8, MAXW = 686;
     var cols = n === 1 ? 1 : 2, rows = Math.ceil(n / cols);
@@ -387,24 +384,25 @@ button:disabled{opacity:0.6;cursor:progress}
         D(SERIF + ';font-weight:700;font-size:32px;color:' + NAVY + ';line-height:1.1', money(d.cond)) +
         D('font-size:12.5px;line-height:1.45;color:' + SOFT, 'Valor à parte do total ao lado. ' + TEXTO_COND));
     }
-    var destBox = '';
-    if(d.destaques.length){
-      destBox = D('display:flex;flex-direction:column;gap:' + DGAP + 'px',
-        D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD, 'DESTAQUES DO IMÓVEL') +
-        d.destaques.map(function(t){
-          return D('display:flex;align-items:flex-start;gap:10px;font-size:' + DFS + 'px;line-height:' + DLH,
-            D('width:7px;height:7px;background:' + GOLD + ';margin-top:6px;flex:none') + '<span>' + esc(t) + '</span>');
-        }).join(''));
+    var garTxt = '';
+    if(d.garMostrar && (d.garSeguro || d.garTitulo)){
+      garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.45;color:' + SOFT,
+        (d.garSeguro ? '<div><b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
+        (d.garTitulo ? '<div><b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
     }
-    var right = destBox ? D('flex:1;min-width:0;display:flex;flex-direction:column;gap:20px', destBox) : '';
+    var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
+      D('background:' + GOLDF + ';color:' + NAVY + ';padding:12px 16px;display:flex;flex-direction:column;gap:4px',
+        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span><span style="font-weight:600;font-size:15px">Seguro Fiança · Título de Capitalização</span>') +
+      garTxt);
+    var right = D('flex:1;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
 
     var mainRow = D('display:flex;gap:28px;align-items:flex-start;flex:none',
-      D('flex:' + (right ? '0.8' : '1') + ';min-width:0;display:flex;flex-direction:column',
+      D('flex:1;min-width:0;display:flex;flex-direction:column',
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
         D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:13px 16px;background:' + NAVY + ';color:#FFFFFF',
           '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:30px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
         D('margin-top:8px;font-size:12.5px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Observação:</b> Contrato de ' + d.prazo + ' meses.') +
-        (condBox ? D('margin-top:12px;display:flex;flex-direction:column', condBox) : '')) +
+        '') +
       right);
 
     var linkBar = '';
@@ -413,17 +411,6 @@ button:disabled{opacity:0.6;cursor:progress}
         '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';white-space:nowrap">VER O IMÓVEL ONLINE</span>' +
         '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + NAVY + ';text-decoration:underline">' + esc(linkCurto(d.link)) + '</span></div>';
     }
-
-    var garTxt = '';
-    if(d.garMostrar && (d.garSeguro || d.garTitulo)){
-      garTxt = D('display:flex;flex-direction:column;gap:3px;font-size:12px;line-height:1.45;color:' + SOFT,
-        (d.garSeguro ? '<div><b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
-        (d.garTitulo ? '<div><b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
-    }
-    var garantias = D('display:flex;flex-direction:column;gap:8px;flex:none',
-      D('background:' + GOLDF + ';color:' + NAVY + ';padding:12px 18px;display:flex;align-items:center;flex-wrap:wrap;gap:6px 18px;font-size:14px',
-        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span><span style="font-weight:600">Seguro Fiança</span><span>·</span><span style="font-weight:600">Título de Capitalização</span>') +
-      garTxt);
 
     var fotoHtml = imgs.foto
       ? D('width:52px;height:52px;border-radius:26px;background:#D8DDE7 ' + U('foto') + ' center/cover no-repeat;flex:none')
@@ -441,7 +428,7 @@ button:disabled{opacity:0.6;cursor:progress}
         (imgs.logo ? D(SERIF + ';font-weight:600;font-size:22px;line-height:1.1;color:' + NAVY + ';text-align:right;padding-bottom:6px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária')) : '')));
 
     return '<div id="sheet" style="width:794px;min-height:' + PAGE_H + 'px;background:' + IVORY + ';padding:30px 52px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;' + SANS + ';color:' + INK + ';box-sizing:border-box">' +
-      header + title + ficha + fotos + mainRow + linkBar + garantias + footer + '</div>';
+      header + title + ficha + fotos + mainRow + linkBar + footer + '</div>';
   }
 
   /* Mede a folha fora da tela e reduz a altura das fotos se o conteúdo passar de uma página A4. */
@@ -459,7 +446,7 @@ button:disabled{opacity:0.6;cursor:progress}
   }
   /* Tenta caber em uma página A4: primeiro encolhe as fotos (até um mínimo), depois compacta os destaques. */
   function fitSheet(d, inline){
-    var MINPH = 300, START = 400, last = '';
+    var MINPH = 300, START = 460, last = '';
     for(var lvl = 0; lvl < 4; lvl++){
       var html = sheet(d, inline, START, lvl);
       var h = measure(html);
@@ -849,11 +836,6 @@ button:disabled{opacity:0.6;cursor:progress}
       L.push('+ Cota do condomínio: ' + brl(d.cond) + ' (' + TEXTO_COND.replace(/\.$/, '') + ')');
       L.push('-----');
     }
-    if(d.destaques.length){
-      L.push('');
-      L.push('*Destaques do imóvel:*');
-      d.destaques.forEach(function(t){ L.push('* ' + t); });
-    }
     if(d.link){ L.push(''); L.push('Ver o imóvel online: ' + d.link); }
     L.push('');
     L.push('Observação: Contrato de ' + d.prazo + ' meses.');
@@ -885,7 +867,7 @@ button:disabled{opacity:0.6;cursor:progress}
 
   /* ---------- Limpar ---------- */
   function limpar(){
-    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','destaques','tipoOutro'].forEach(function(id){ $(id).value = ''; });
+    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro'].forEach(function(id){ $(id).value = ''; });
     $('prazo').value = '30';
     $('tipo').value = '';
     $('tipoOutroBox').hidden = true;
@@ -921,7 +903,7 @@ button:disabled{opacity:0.6;cursor:progress}
   $('garMostrar').addEventListener('change', function(e){ perfil.garMostrar = e.target.checked; savePerfil(); schedule(); });
   $('garSeguro').addEventListener('input', function(e){ perfil.garSeguro = e.target.value; savePerfil(); schedule(); });
   $('garTitulo').addEventListener('input', function(e){ perfil.garTitulo = e.target.value; savePerfil(); schedule(); });
-  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','destaques','tipoOutro','prazo'].forEach(function(id){
+  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo'].forEach(function(id){
     $(id).addEventListener('input', schedule);
   });
   ['aluguel','iptu','cond'].forEach(function(id){
