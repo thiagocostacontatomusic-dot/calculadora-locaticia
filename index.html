@@ -303,24 +303,25 @@ button:disabled{opacity:0.6;cursor:progress}
   /* ---------- Folha A4 (prévia e exportação usam o mesmo HTML) ---------- */
   function fotosBloco(d, U, h){
     var n = imgs.fotos.length;
-    function ph(i, extra){ return D('min-width:0;' + extra + ';background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
-    if(n === 0){
-      return D('min-height:56px;max-height:90px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px',
-        D('flex:1;height:1px;background:' + GOLD) +
-        D(SERIF + ';font-weight:600;font-size:20px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
-        D('flex:1;height:1px;background:' + GOLD));
-    }
     var faixa = D('height:34px;flex:none;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:14px;padding:0 20px',
       D('flex:1;height:1px;background:' + GOLD) +
       D(SERIF + ';font-weight:600;font-size:15px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';white-space:nowrap', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
       D('flex:1;height:1px;background:' + GOLD));
-    function ph(i, extra){ return D('min-width:0;' + extra + ';background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
-    var wrap = 'display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:560px';
-    var row = 'display:flex;gap:8px;flex:1 1 0;min-height:0';
-    if(n === 1) return faixa + D(wrap, ph(0, 'flex:1'));
-    if(n === 2) return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')));
-    if(n === 3) return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1')));
-    return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1') + ph(3, 'flex:1')));
+    /* Todas as fotos em 16:9 (sem achatar). O tamanho do conjunto acompanha a altura disponível (h). */
+    var GAP = 8, MAXW = 686;
+    var cols = n === 1 ? 1 : 2, rows = Math.ceil(n / cols);
+    var cw0 = Math.floor(((h - (rows - 1) * GAP) / rows) * 16 / 9);
+    var wg = Math.min(MAXW, cols * cw0 + (cols - 1) * GAP);
+    var cw = Math.floor((wg - (cols - 1) * GAP) / cols);
+    var ch = Math.round(cw * 9 / 16);
+    function cell(i){ return D('flex:none;width:' + cw + 'px;height:' + ch + 'px;background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
+    var linhas = '';
+    for(var r = 0; r < rows; r++){
+      var cs = '';
+      for(var c = 0; c < cols; c++){ var idx = r * cols + c; if(idx < n) cs += cell(idx); }
+      linhas += D('display:flex;justify-content:center;gap:' + GAP + 'px;flex:none', cs);
+    }
+    return faixa + D('display:flex;justify-content:center;flex:none', D('display:flex;flex-direction:column;gap:' + GAP + 'px;flex:none', linhas));
   }
 
   function fichaBloco(d){
@@ -458,7 +459,7 @@ button:disabled{opacity:0.6;cursor:progress}
   }
   /* Tenta caber em uma página A4: primeiro encolhe as fotos (até um mínimo), depois compacta os destaques. */
   function fitSheet(d, inline){
-    var MINPH = 200, START = 340, last = '';
+    var MINPH = 300, START = 400, last = '';
     for(var lvl = 0; lvl < 4; lvl++){
       var html = sheet(d, inline, START, lvl);
       var h = measure(html);
@@ -481,7 +482,7 @@ button:disabled{opacity:0.6;cursor:progress}
     }
     if(imgs.fotos.length){
       var hh = measure(sheet(d, inline, START, 3));
-      var p3 = Math.max(180, Math.floor(START - (hh - PAGE_H)) - 4);
+      var p3 = Math.max(260, Math.floor(START - (hh - PAGE_H)) - 4);
       last = sheet(d, inline, p3, 3);
     }
     return last; /* conteúdo muito longo: a página fica mais alta que o A4 */
@@ -735,7 +736,7 @@ button:disabled{opacity:0.6;cursor:progress}
   function montarPdf(r){
     var w = 210, h = r.canvas.height / r.canvas.width * 210, x0 = 0;
     var pageH = 297;
-    if(h > 297 && h <= 297 * 1.10){ var k = 297 / h; w = 210 * k; h = 297; x0 = (210 - w) / 2; }   /* até 10% acima: reduz para caber no A4 */
+    if(h > 297 && h <= 297 * 1.16){ var k = 297 / h; w = 210 * k; h = 297; x0 = (210 - w) / 2; }   /* até 16% acima: reduz para caber no A4 */
     else if(h > 297){ pageH = h; }                                                                 /* muito longo: página mais alta, sem achatar */
     var pdf = new window.jspdf.jsPDF({ unit:'mm', format:[210, pageH], orientation:'portrait', compress:true });
     pdf.setFillColor(250,247,240);
