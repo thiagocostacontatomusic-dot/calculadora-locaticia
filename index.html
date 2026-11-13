@@ -314,6 +314,7 @@ button:disabled{opacity:0.6;cursor:progress}
       D('flex:1;height:1px;background:' + GOLD) +
       D(SERIF + ';font-weight:600;font-size:15px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';white-space:nowrap', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
       D('flex:1;height:1px;background:' + GOLD));
+    function ph(i, extra){ return D('min-width:0;' + extra + ';background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
     var wrap = 'display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:560px';
     var row = 'display:flex;gap:8px;flex:1 1 0;min-height:0';
     if(n === 1) return faixa + D(wrap, ph(0, 'flex:1'));
@@ -457,7 +458,7 @@ button:disabled{opacity:0.6;cursor:progress}
   }
   /* Tenta caber em uma página A4: primeiro encolhe as fotos (até um mínimo), depois compacta os destaques. */
   function fitSheet(d, inline){
-    var MINPH = 190, START = 340, last = '';
+    var MINPH = 200, START = 340, last = '';
     for(var lvl = 0; lvl < 4; lvl++){
       var html = sheet(d, inline, START, lvl);
       var h = measure(html);
@@ -480,7 +481,7 @@ button:disabled{opacity:0.6;cursor:progress}
     }
     if(imgs.fotos.length){
       var hh = measure(sheet(d, inline, START, 3));
-      var p3 = Math.max(130, Math.floor(START - (hh - PAGE_H)) - 4);
+      var p3 = Math.max(180, Math.floor(START - (hh - PAGE_H)) - 4);
       last = sheet(d, inline, p3, 3);
     }
     return last; /* conteúdo muito longo: a página fica mais alta que o A4 */
@@ -734,7 +735,7 @@ button:disabled{opacity:0.6;cursor:progress}
   function montarPdf(r){
     var w = 210, h = r.canvas.height / r.canvas.width * 210, x0 = 0;
     var pageH = 297;
-    if(h > 297 && h <= 297 * 1.06){ var k = 297 / h; w = 210 * k; h = 297; x0 = (210 - w) / 2; }   /* até 6% acima: reduz para caber no A4 */
+    if(h > 297 && h <= 297 * 1.10){ var k = 297 / h; w = 210 * k; h = 297; x0 = (210 - w) / 2; }   /* até 10% acima: reduz para caber no A4 */
     else if(h > 297){ pageH = h; }                                                                 /* muito longo: página mais alta, sem achatar */
     var pdf = new window.jspdf.jsPDF({ unit:'mm', format:[210, pageH], orientation:'portrait', compress:true });
     pdf.setFillColor(250,247,240);
