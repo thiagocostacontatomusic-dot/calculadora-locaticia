@@ -302,16 +302,17 @@ button:disabled{opacity:0.6;cursor:progress}
     var n = imgs.fotos.length;
     function ph(i, extra){ return D('min-width:0;' + extra + ';background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
     if(n === 0){
-      return D('min-height:104px;max-height:210px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px',
+      return D('min-height:56px;max-height:90px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px',
         D('flex:1;height:1px;background:' + GOLD) +
-        D(SERIF + ';font-weight:600;font-size:26px;letter-spacing:0.22em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
+        D(SERIF + ';font-weight:600;font-size:20px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
         D('flex:1;height:1px;background:' + GOLD));
     }
-    var wrap = 'display:flex;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:460px';
+    var wrap = 'display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:560px';
+    var row = 'display:flex;gap:8px;flex:1 1 0;min-height:0';
     if(n === 1) return D(wrap, ph(0, 'flex:1'));
-    if(n === 2) return D(wrap, ph(0, 'flex:1') + ph(1, 'flex:1'));
-    if(n === 3) return D(wrap, ph(0, 'flex:1.5') + D('flex:1;min-width:0;display:flex;flex-direction:column;gap:8px', ph(1, 'flex:1') + ph(2, 'flex:1')));
-    return D(wrap, ph(0, 'flex:1.5') + D('flex:1;min-width:0;display:flex;flex-direction:column;gap:8px', ph(1, 'flex:1') + ph(2, 'flex:1') + ph(3, 'flex:1')));
+    if(n === 2) return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')));
+    if(n === 3) return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1')));
+    return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1') + ph(3, 'flex:1')));
   }
 
   function fichaBloco(d){
@@ -339,11 +340,11 @@ button:disabled{opacity:0.6;cursor:progress}
     var c = calc(d);
 
     var logoHtml = imgs.logo
-      ? D('width:190px;height:48px;background:' + U('logo') + ' left center/contain no-repeat')
-      : D(SERIF + ';font-weight:700;font-size:24px;color:' + NAVY + ';line-height:1.1;max-width:380px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária'));
+      ? D('width:170px;height:34px;background:' + U('logo') + ' left center/contain no-repeat')
+      : D(SERIF + ';font-weight:700;font-size:19px;color:' + NAVY + ';line-height:1.1;max-width:380px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária'));
 
-    var header = D('display:flex;flex-direction:column;gap:12px;flex:none',
-      D('display:flex;justify-content:space-between;align-items:center;min-height:48px', logoHtml +
+    var header = D('display:flex;flex-direction:column;gap:8px;flex:none',
+      D('display:flex;justify-content:space-between;align-items:center;min-height:30px', logoHtml +
         D('font-size:12px;letter-spacing:0.2em;font-weight:600;color:' + NAVY, 'INFORMAÇÕES LOCATÍCIAS')) +
       D('height:2px;background:' + GOLD + ';flex:none'));
 
@@ -445,15 +446,15 @@ button:disabled{opacity:0.6;cursor:progress}
     return h;
   }
   function fitSheet(d, inline){
-    var photoH = 250;
+    var photoH = 340;
     var html = sheet(d, inline, photoH);
     if(imgs.fotos.length){
       var h = measure(html);
       if(h > PAGE_H + 1){
-        photoH = Math.max(130, Math.floor(photoH - (h - PAGE_H)) - 4);
+        photoH = Math.max(160, Math.floor(photoH - (h - PAGE_H)) - 4);
         html = sheet(d, inline, photoH);
         h = measure(html);
-        if(h > PAGE_H + 1){ photoH = Math.max(130, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
+        if(h > PAGE_H + 1){ photoH = Math.max(160, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
       }
     }
     return html;
