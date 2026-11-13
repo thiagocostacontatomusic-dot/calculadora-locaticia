@@ -307,12 +307,16 @@ button:disabled{opacity:0.6;cursor:progress}
         D(SERIF + ';font-weight:600;font-size:20px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
         D('flex:1;height:1px;background:' + GOLD));
     }
+    var faixa = D('height:34px;flex:none;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:14px;padding:0 20px',
+      D('flex:1;height:1px;background:' + GOLD) +
+      D(SERIF + ';font-weight:600;font-size:15px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';white-space:nowrap', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
+      D('flex:1;height:1px;background:' + GOLD));
     var wrap = 'display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:560px';
     var row = 'display:flex;gap:8px;flex:1 1 0;min-height:0';
-    if(n === 1) return D(wrap, ph(0, 'flex:1'));
-    if(n === 2) return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')));
-    if(n === 3) return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1')));
-    return D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1') + ph(3, 'flex:1')));
+    if(n === 1) return faixa + D(wrap, ph(0, 'flex:1'));
+    if(n === 2) return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')));
+    if(n === 3) return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1')));
+    return faixa + D(wrap, D(row, ph(0, 'flex:1') + ph(1, 'flex:1')) + D(row, ph(2, 'flex:1') + ph(3, 'flex:1')));
   }
 
   function fichaBloco(d){
@@ -451,10 +455,10 @@ button:disabled{opacity:0.6;cursor:progress}
     if(imgs.fotos.length){
       var h = measure(html);
       if(h > PAGE_H + 1){
-        photoH = Math.max(160, Math.floor(photoH - (h - PAGE_H)) - 4);
+        photoH = Math.max(100, Math.floor(photoH - (h - PAGE_H)) - 4);
         html = sheet(d, inline, photoH);
         h = measure(html);
-        if(h > PAGE_H + 1){ photoH = Math.max(160, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
+        if(h > PAGE_H + 1){ photoH = Math.max(100, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
       }
     }
     return html;
