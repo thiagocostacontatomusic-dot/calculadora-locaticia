@@ -396,6 +396,7 @@ button:disabled{opacity:0.6;cursor:progress}
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
         D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:13px 16px;background:' + NAVY + ';color:#FFFFFF',
           '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:30px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
+        D('margin-top:8px;font-size:12.5px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Observação:</b> Contrato de 30 meses.') +
         (condBox ? D('margin-top:12px;display:flex;flex-direction:column', condBox) : '')) +
       right);
 
@@ -828,6 +829,8 @@ button:disabled{opacity:0.6;cursor:progress}
       d.destaques.forEach(function(t){ L.push('* ' + t); });
     }
     if(d.link){ L.push(''); L.push('Ver o imóvel online: ' + d.link); }
+    L.push('');
+    L.push('Observação: Contrato de 30 meses.');
     L.push('');
     L.push('Trabalhamos com as seguintes modalidades de garantia para locação:');
     L.push('* Seguro Fiança;');
