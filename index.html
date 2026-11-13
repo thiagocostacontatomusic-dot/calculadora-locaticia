@@ -302,12 +302,12 @@ button:disabled{opacity:0.6;cursor:progress}
     var n = imgs.fotos.length;
     function ph(i, extra){ return D('min-width:0;' + extra + ';background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
     if(n === 0){
-      return D('height:104px;flex:none;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px',
+      return D('min-height:104px;max-height:210px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px',
         D('flex:1;height:1px;background:' + GOLD) +
         D(SERIF + ';font-weight:600;font-size:26px;letter-spacing:0.22em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
         D('flex:1;height:1px;background:' + GOLD));
     }
-    var wrap = 'display:flex;gap:8px;height:' + h + 'px;flex:none';
+    var wrap = 'display:flex;gap:8px;flex:1 1 auto;min-height:' + h + 'px;max-height:460px';
     if(n === 1) return D(wrap, ph(0, 'flex:1'));
     if(n === 2) return D(wrap, ph(0, 'flex:1') + ph(1, 'flex:1'));
     if(n === 3) return D(wrap, ph(0, 'flex:1.5') + D('flex:1;min-width:0;display:flex;flex-direction:column;gap:8px', ph(1, 'flex:1') + ph(2, 'flex:1')));
@@ -322,8 +322,8 @@ button:disabled{opacity:0.6;cursor:progress}
     if(isFinite(d.vagas) && d.vagas > 0) cells.push([String(d.vagas), d.vagas === 1 ? 'Vaga' : 'Vagas']);
     if(!cells.length) return '';
     return D('display:flex;background:#FFFFFF;border:1px solid #E1D9C4;flex:none', cells.map(function(c, i){
-      return D('flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 6px;' + (i ? 'border-left:1px solid #E1D9C4' : ''),
-        D(SERIF + ';font-weight:700;font-size:25px;line-height:1.1;color:' + NAVY, esc(c[0])) +
+      return D('flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0;padding:5px 6px;' + (i ? 'border-left:1px solid #E1D9C4' : ''),
+        D(SERIF + ';font-weight:700;font-size:22px;line-height:1.1;color:' + NAVY, esc(c[0])) +
         D('font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:' + MUTED, c[1]));
     }).join(''));
   }
@@ -351,7 +351,7 @@ button:disabled{opacity:0.6;cursor:progress}
     var sub = [d.tipo, d.bairro].filter(Boolean).map(esc).join(' · ') || PH('Tipo · Bairro / região');
     var codigo = d.codigo ? D('background:' + GOLDF + ';color:' + NAVY + ';font-size:12px;font-weight:600;letter-spacing:0.12em;padding:6px 12px;white-space:nowrap', 'CÓD. ' + esc(d.codigo)) : '';
     var title = D('display:flex;flex-direction:column;gap:4px;flex:none',
-      D('display:flex;align-items:center;gap:16px;flex-wrap:wrap', D(SERIF + ';font-weight:600;font-size:44px;line-height:1.05;color:' + NAVY, titulo) + codigo) +
+      D('display:flex;align-items:center;gap:16px;flex-wrap:wrap', D(SERIF + ';font-weight:600;font-size:40px;line-height:1.05;color:' + NAVY, titulo) + codigo) +
       D('font-size:15px;color:' + SOFT, sub));
 
     var ficha = fichaBloco(d);
@@ -364,33 +364,34 @@ button:disabled{opacity:0.6;cursor:progress}
       ['Seguro incêndio (2,5%)', c.seguro],
       ['Taxas bancárias', TAXA_BANCARIA]
     ].map(function(r){
-      return D('display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid ' + LINE + ';font-size:14px',
+      return D('display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid ' + LINE + ';font-size:14px',
         '<span>' + r[0] + '</span><span style="font-weight:500;font-variant-numeric:tabular-nums">' + money(r[1]) + '</span>');
     }).join('');
 
     var condBox = '';
     if(isFinite(d.cond) && d.cond > 0){
-      condBox = D('border:1.5px solid ' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:6px',
+      condBox = D('border:1.5px solid ' + NAVY + ';padding:10px 16px;display:flex;flex-direction:column;gap:4px',
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY, 'COTA DO CONDOMÍNIO') +
         D(SERIF + ';font-weight:700;font-size:32px;color:' + NAVY + ';line-height:1.1', money(d.cond)) +
         D('font-size:12.5px;line-height:1.45;color:' + SOFT, 'Valor à parte do total ao lado. ' + TEXTO_COND));
     }
     var destBox = '';
     if(d.destaques.length){
-      destBox = D('display:flex;flex-direction:column;gap:9px',
+      destBox = D('display:flex;flex-direction:column;gap:7px',
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD, 'DESTAQUES DO IMÓVEL') +
         d.destaques.map(function(t){
           return D('display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.35',
             D('width:7px;height:7px;background:' + GOLD + ';margin-top:6px;flex:none') + '<span>' + esc(t) + '</span>');
         }).join(''));
     }
-    var right = (condBox || destBox) ? D('flex:1;min-width:0;display:flex;flex-direction:column;gap:20px', condBox + destBox) : '';
+    var right = destBox ? D('flex:1;min-width:0;display:flex;flex-direction:column;gap:20px', destBox) : '';
 
-    var mainRow = D('display:flex;gap:32px;align-items:flex-start;flex:none',
-      D('flex:' + (right ? '1.15' : '1') + ';min-width:0;display:flex;flex-direction:column',
+    var mainRow = D('display:flex;gap:28px;align-items:flex-start;flex:none',
+      D('flex:' + (right ? '0.8' : '1') + ';min-width:0;display:flex;flex-direction:column',
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
         D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:13px 16px;background:' + NAVY + ';color:#FFFFFF',
-          '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:30px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>')) +
+          '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:30px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
+        (condBox ? D('margin-top:12px;display:flex;flex-direction:column', condBox) : '')) +
       right);
 
     var linkBar = '';
@@ -426,7 +427,7 @@ button:disabled{opacity:0.6;cursor:progress}
             '<span style="' + SERIF + ';font-weight:700;font-size:22px;color:' + NAVY + '">' + (d.consultor ? esc(d.consultor) : PH('Nome do consultor')) + '</span>')) +
         (imgs.logo ? D(SERIF + ';font-weight:600;font-size:22px;line-height:1.1;color:' + NAVY + ';text-align:right;padding-bottom:6px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária')) : '')));
 
-    return '<div id="sheet" style="width:794px;min-height:' + PAGE_H + 'px;background:' + IVORY + ';padding:40px 56px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;' + SANS + ';color:' + INK + ';box-sizing:border-box">' +
+    return '<div id="sheet" style="width:794px;min-height:' + PAGE_H + 'px;background:' + IVORY + ';padding:30px 52px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;' + SANS + ';color:' + INK + ';box-sizing:border-box">' +
       header + title + ficha + fotos + mainRow + linkBar + garantias + footer + '</div>';
   }
 
@@ -444,15 +445,15 @@ button:disabled{opacity:0.6;cursor:progress}
     return h;
   }
   function fitSheet(d, inline){
-    var photoH = 210;
+    var photoH = 250;
     var html = sheet(d, inline, photoH);
     if(imgs.fotos.length){
       var h = measure(html);
       if(h > PAGE_H + 1){
-        photoH = Math.max(70, Math.floor(photoH - (h - PAGE_H)) - 4);
+        photoH = Math.max(130, Math.floor(photoH - (h - PAGE_H)) - 4);
         html = sheet(d, inline, photoH);
         h = measure(html);
-        if(h > PAGE_H + 1){ photoH = Math.max(70, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
+        if(h > PAGE_H + 1){ photoH = Math.max(130, Math.floor(photoH - (h - PAGE_H)) - 2); html = sheet(d, inline, photoH); }
       }
     }
     return html;
