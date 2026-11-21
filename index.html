@@ -249,8 +249,8 @@ button:disabled{opacity:0.6;cursor:progress}
       consultor: perfil.consultor.trim(),
       mostrarConsultor: perfil.mostrarConsultor,
       garMostrar: perfil.garMostrar,
-      garSeguro: perfil.garSeguro.trim(),
-      garTitulo: perfil.garTitulo.trim(),
+      garSeguro: perfil.garSeguro.trim() || GAR_SEGURO_PADRAO,
+      garTitulo: perfil.garTitulo.trim() || GAR_TITULO_PADRAO,
       emissao: fmtDate(hoje),
       validade: fmtDate(addMonth(hoje))
     };
