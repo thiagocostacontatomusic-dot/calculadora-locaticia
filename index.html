@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
 <style>
-/* Layout: formulário à esquerda, prévia da folha A4 à direita. Azul-marinho e dourado da Especiale Imóveis. */
+/* Layout: formulário à esquerda, prévia da imagem à direita. Azul-marinho e dourado da Especiale Imóveis. */
 :root{
   --navy:#0B1F3A;
   --gold:#C9A24B;
@@ -70,19 +70,10 @@ button:disabled{opacity:0.6;cursor:progress}
 #msg{font-size:13px;min-height:20px;color:var(--navy);font-weight:500}
 #msg.err{color:var(--danger)}
 #fallback{display:none;min-height:150px;font-size:13px}
-.thumbrow{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
-.thumb{width:44px;height:44px;border:1px solid var(--line);background:#fff center/cover no-repeat;flex:none}
-.thumb.logo{width:96px;background-size:contain}
-.thumb.round{border-radius:50%}
-#fotosList{display:flex;flex-wrap:wrap;gap:10px}
-.fotoItem{display:flex;flex-direction:column;gap:4px;align-items:flex-start;width:92px}
-.fotoItem .pic{width:92px;height:64px;border:1px solid var(--line);background:#fff center/cover no-repeat}
-.fotoItem .tag{font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--navy)}
-.fotoItem button.link{padding:2px 0;font-size:12px}
 .preview-col{display:flex;flex-direction:column;gap:10px;min-width:0}
 .preview-col h2{margin:0;font-size:12px;font-weight:600;letter-spacing:0.16em;color:var(--navy);text-transform:uppercase}
 #stage{width:100%;overflow:hidden;padding:6px 14px 24px}
-#scaler{transform-origin:top left;width:794px;background:#FAF7F0;box-shadow:0 1px 3px rgba(11,31,58,0.25),0 8px 24px rgba(11,31,58,0.12)}
+#scaler{transform-origin:top left;width:760px;background:#FAF7F0;box-shadow:0 1px 3px rgba(11,31,58,0.25),0 8px 24px rgba(11,31,58,0.12)}
 @media (prefers-reduced-motion:no-preference){button{transition:background .15s}}
 </style>
 </head>
@@ -100,44 +91,12 @@ button:disabled{opacity:0.6;cursor:progress}
     <div class="inner">
       <p class="hint" style="margin:0">Fica salvo neste navegador. Se trocar de computador ou limpar o navegador, é só preencher de novo.</p>
       <div class="field"><label for="consultor">Nome do consultor</label><input type="text" id="consultor" placeholder="Seu nome"></div>
-      <div class="field"><label for="imobiliaria">Nome da imobiliária</label><input type="text" id="imobiliaria" placeholder="Nome da imobiliária"></div>
-      <div class="field"><label for="fotoFile">Sua foto (opcional)</label>
-        <input type="file" id="fotoFile" accept="image/*">
-        <div class="thumbrow"><div class="thumb round" id="fotoThumb" hidden></div><button type="button" class="link" id="fotoDel" hidden>Remover foto</button></div>
-      </div>
-      <div class="field"><label for="logoFile">Logo da imobiliária</label>
-        <input type="file" id="logoFile" accept="image/*">
-        <div class="thumbrow"><div class="thumb logo" id="logoThumb" hidden></div><button type="button" class="link" id="logoDel" hidden>Remover logo</button></div>
-        <span class="hint">Sem logo, o PDF mostra o nome da imobiliária no cabeçalho.</span>
-      </div>
-      <div class="check"><input type="checkbox" id="garMostrar" checked><label for="garMostrar">Explicar as garantias no PDF</label></div>
+      <div class="check"><input type="checkbox" id="mostrarConsultor"><label for="mostrarConsultor">Mostrar meu nome na imagem</label></div>
+      <div class="check"><input type="checkbox" id="garMostrar" checked><label for="garMostrar">Explicar as garantias na imagem</label></div>
       <div class="field"><label for="garSeguro">Texto do Seguro Fiança</label><textarea id="garSeguro" style="min-height:64px"></textarea></div>
       <div class="field"><label for="garTitulo">Texto do Título de Capitalização</label><textarea id="garTitulo" style="min-height:64px"></textarea></div>
     </div>
   </details>
-
-  <fieldset>
-    <legend>Imóvel</legend>
-    <div class="row2">
-      <div class="field"><label for="codigo">Código do imóvel</label><input type="text" id="codigo" placeholder="Ex.: 12345"></div>
-      <div class="field"><label for="tipo">Tipo de imóvel</label><select id="tipo"></select></div>
-    </div>
-    <div class="field" id="tipoOutroBox" hidden><label for="tipoOutro">Qual tipo?</label><input type="text" id="tipoOutro" placeholder="Digite o tipo do imóvel"></div>
-    <div class="field"><label for="empreendimento">Nome do empreendimento</label><input type="text" id="empreendimento" placeholder="Ex.: Edifício Exemplo"></div>
-    <div class="field"><label for="bairro">Bairro / região</label><input type="text" id="bairro" placeholder="Ex.: Bairro Exemplo"></div>
-    <div class="field"><label for="link">Link do imóvel (opcional)</label><input type="text" id="link" inputmode="url" placeholder="https://..."><span class="hint">No PDF o link fica clicável.</span></div>
-  </fieldset>
-
-  <fieldset>
-    <legend>Características (opcional)</legend>
-    <div class="row4">
-      <div class="field"><label for="area">Área (m²)</label><input type="text" id="area" inputmode="decimal" placeholder="85"></div>
-      <div class="field"><label for="quartos">Quartos</label><input type="text" id="quartos" inputmode="numeric" placeholder="3"></div>
-      <div class="field"><label for="suites">Suítes</label><input type="text" id="suites" inputmode="numeric" placeholder="1"></div>
-      <div class="field"><label for="vagas">Vagas</label><input type="text" id="vagas" inputmode="numeric" placeholder="2"></div>
-    </div>
-    <span class="hint">Só o que for preenchido aparece no PDF.</span>
-  </fieldset>
 
   <fieldset>
     <legend>Valores</legend>
@@ -151,21 +110,33 @@ button:disabled{opacity:0.6;cursor:progress}
       <span class="hint">Deixe em branco se não houver condomínio. O texto sobre consumo individual entra sozinho.</span></div>
   </fieldset>
 
-  <fieldset>
-    <legend>Fotos do imóvel (opcional)</legend>
-    <div class="field"><label for="fotosFile">Até 4 fotos (a primeira é a capa)</label>
-      <input type="file" id="fotosFile" accept="image/*" multiple>
-      <div id="fotosList"></div>
-      <span class="hint" id="fotosHint"></span>
+  <details class="card" id="imovelBox">
+    <summary>Dados do imóvel (opcional)</summary>
+    <div class="inner">
+      <p class="hint" style="margin:0">Não aparecem na imagem. Servem só para o nome do arquivo e para o texto do WhatsApp.</p>
+      <div class="row2">
+        <div class="field"><label for="codigo">Código do imóvel</label><input type="text" id="codigo" placeholder="Ex.: 12345"></div>
+        <div class="field"><label for="tipo">Tipo de imóvel</label><select id="tipo"></select></div>
+      </div>
+      <div class="field" id="tipoOutroBox" hidden><label for="tipoOutro">Qual tipo?</label><input type="text" id="tipoOutro" placeholder="Digite o tipo do imóvel"></div>
+      <div class="field"><label for="empreendimento">Nome do empreendimento</label><input type="text" id="empreendimento" placeholder="Ex.: Edifício Exemplo"></div>
+      <div class="field"><label for="bairro">Bairro / região</label><input type="text" id="bairro" placeholder="Ex.: Bairro Exemplo"></div>
+      <div class="field"><label for="link">Link do imóvel</label><input type="text" id="link" inputmode="url" placeholder="https://..."></div>
+      <div class="row4">
+        <div class="field"><label for="area">Área (m²)</label><input type="text" id="area" inputmode="decimal" placeholder="85"></div>
+        <div class="field"><label for="quartos">Quartos</label><input type="text" id="quartos" inputmode="numeric" placeholder="3"></div>
+        <div class="field"><label for="suites">Suítes</label><input type="text" id="suites" inputmode="numeric" placeholder="1"></div>
+        <div class="field"><label for="vagas">Vagas</label><input type="text" id="vagas" inputmode="numeric" placeholder="2"></div>
+      </div>
     </div>
-  </fieldset>
+  </details>
 
   <div class="actions">
-    <div class="lbl">Baixar proposta</div>
+    <div class="lbl">Imagem para enviar ao cliente</div>
     <div class="grp">
-      <button type="button" class="primary" id="btnPdf">PDF</button>
-      <button type="button" class="secondary" id="btnPng">PNG</button>
-      <button type="button" class="secondary" id="btnJpg">JPEG</button>
+      <button type="button" class="primary" id="btnPng">Baixar PNG</button>
+      <button type="button" class="secondary" id="btnJpg">Baixar JPEG</button>
+      <button type="button" class="secondary" id="btnImg">Copiar imagem</button>
     </div>
     <div class="grp">
       <button type="button" class="secondary" id="btnCopy">Copiar texto para WhatsApp</button>
@@ -176,17 +147,16 @@ button:disabled{opacity:0.6;cursor:progress}
   <textarea id="fallback" readonly aria-label="Texto para copiar"></textarea>
   <div id="saveBox" hidden>
     <p id="saveHint" class="hint" style="margin:0 0 8px"></p>
-    <img id="saveImg" alt="Proposta pronta para salvar" style="width:100%;height:auto;border:1px solid var(--line);background:#fff">
+    <img id="saveImg" alt="Imagem pronta para salvar" style="width:100%;height:auto;border:1px solid var(--line);background:#fff">
   </div>
 </form>
 
-<section class="preview-col" aria-label="Prévia da proposta">
-  <h2>Prévia (A4)</h2>
+<section class="preview-col" aria-label="Prévia da imagem">
+  <h2>Prévia da imagem</h2>
   <div id="stage"><div id="scaler"><div id="sheetHost"></div></div></div>
 </section>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
   'use strict';
@@ -195,31 +165,28 @@ button:disabled{opacity:0.6;cursor:progress}
   var TAXA_BANCARIA = 7;
   var PCT_FUNDO = 0.05;
   var PCT_SEGURO = 0.025;
-  var MAX_FOTOS = 4;
   var TIPOS = ['Apartamento','Casa','Casa em condomínio','Cobertura','Studio / Kitnet','Sala comercial','Loja','Galpão'];
   var TEXTO_COND = 'Com adicionais de consumo individual da unidade (água, gás etc.).';
   var GAR_SEGURO_PADRAO = 'Seguro contratado junto a uma seguradora.';
   var GAR_SEGURO_ANTIGO = 'Seguro contratado junto a uma seguradora, no lugar do fiador.';
   var GAR_TITULO_PADRAO = 'Título adquirido como garantia da locação, conforme as condições do título.';
-  var IMOBILIARIA_PADRAO = 'Especiale Imóveis';
-  var STORE_KEY = 'locaticia_perfil_v2';
+  var STORE_KEY = 'locaticia_perfil_v2';   /* mesma chave de antes: quem já cadastrou o perfil não precisa refazer */
   var STORE_KEY_V1 = 'locaticia_perfil_v1';
-  var PAGE_H = 1123;
+  var CARD_W = 760;
+  var SCALE = 3;
 
-  /* Cores e fontes da folha */
-  var NAVY = '#0B1F3A', GOLD = '#C9A24B', GOLDF = '#D4AF4A', GOLDL = '#E7C766';
-  var IVORY = '#FAF7F0', INK = '#1A2740', MUTED = '#55627A', SOFT = '#3A4660', LINE = '#D9D2C0';
+  /* Cores e fontes da imagem */
+  var NAVY = '#0B1F3A', GOLDF = '#D4AF4A', GOLDL = '#E7C766', GOLD = '#C9A24B';
+  var IVORY = '#FAF7F0', INK = '#1A2740', SOFT = '#3A4660', LINE = '#D9D2C0';
   var SERIF = "font-family:'Cormorant Garamond',Georgia,serif";
   var SANS = "font-family:'Inter',system-ui,sans-serif";
 
   /* ---------- Estado ---------- */
-  var imgs = { fotos:[], foto:'', logo:'' };   // data URLs
-  var perfil = { consultor:'', imobiliaria:IMOBILIARIA_PADRAO, garMostrar:true, garSeguro:GAR_SEGURO_PADRAO, garTitulo:GAR_TITULO_PADRAO };
+  var perfil = { consultor:'', mostrarConsultor:false, garMostrar:true, garSeguro:GAR_SEGURO_PADRAO, garTitulo:GAR_TITULO_PADRAO };
 
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function D(style, inner){ return '<div style="' + style + '">' + (inner || '') + '</div>'; }
-  function PH(t){ return '<span style="color:#8A96AB">' + t + '</span>'; }
 
   /* ---------- Números e datas ---------- */
   function parseBRL(str){
@@ -248,7 +215,6 @@ button:disabled{opacity:0.6;cursor:progress}
     if(!/^https?:\/\//i.test(s)) s = 'https://' + s;
     try{ var u = new URL(s); if(!u.hostname || u.hostname.indexOf('.') < 0) return ''; return u.href; }catch(e){ return ''; }
   }
-  function linkCurto(u){ return u.replace(/^https?:\/\//i,'').replace(/\/$/,''); }
 
   /* ---------- Leitura do formulário ---------- */
   function tipoFinal(){
@@ -273,7 +239,7 @@ button:disabled{opacity:0.6;cursor:progress}
       iptu: parseBRL($('iptu').value),
       cond: parseBRL($('cond').value),
       consultor: perfil.consultor.trim(),
-      imobiliaria: perfil.imobiliaria.trim(),
+      mostrarConsultor: perfil.mostrarConsultor,
       garMostrar: perfil.garMostrar,
       garSeguro: perfil.garSeguro.trim(),
       garTitulo: perfil.garTitulo.trim(),
@@ -291,80 +257,9 @@ button:disabled{opacity:0.6;cursor:progress}
     return { fundo:fundo, seguro:seguro, total:total };
   }
 
-  /* ---------- Folha A4 (prévia e exportação usam o mesmo HTML) ---------- */
-  function fotosBloco(d, U, h){
-    var n = imgs.fotos.length;
-    var faixa = D('height:34px;flex:none;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:14px;padding:0 20px',
-      D('flex:1;height:1px;background:' + GOLD) +
-      D(SERIF + ';font-weight:600;font-size:15px;letter-spacing:0.24em;text-transform:uppercase;color:' + GOLDL + ';white-space:nowrap', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
-      D('flex:1;height:1px;background:' + GOLD));
-    if(n === 0){
-      return D('min-height:110px;max-height:320px;flex:1 1 auto;background:' + NAVY + ';display:flex;align-items:center;justify-content:center;gap:20px;padding:0 24px',
-        D('flex:1;height:1px;background:' + GOLD) +
-        D(SERIF + ';font-weight:600;font-size:30px;letter-spacing:0.26em;text-transform:uppercase;color:' + GOLDL + ';text-align:center', d.imobiliaria ? esc(d.imobiliaria) : 'Nome da imobiliária') +
-        D('flex:1;height:1px;background:' + GOLD));
-    }
-    /* Todas as fotos em 16:9 (sem achatar). O tamanho do conjunto acompanha a altura disponível (h). */
-    var GAP = 8, MAXW = 686;
-    var cols = n === 1 ? 1 : 2, rows = Math.ceil(n / cols);
-    var cw0 = Math.floor(((h - (rows - 1) * GAP) / rows) * 16 / 9);
-    var wg = Math.min(MAXW, cols * cw0 + (cols - 1) * GAP);
-    var cw = Math.floor((wg - (cols - 1) * GAP) / cols);
-    var ch = Math.round(cw * 9 / 16);
-    function cell(i){ return D('flex:none;width:' + cw + 'px;height:' + ch + 'px;background:#D8DDE7 ' + U('f' + i) + ' center/cover no-repeat'); }
-    var linhas = '';
-    for(var r = 0; r < rows; r++){
-      var cs = '';
-      for(var c = 0; c < cols; c++){ var idx = r * cols + c; if(idx < n) cs += cell(idx); }
-      linhas += D('display:flex;justify-content:center;gap:' + GAP + 'px;flex:none', cs);
-    }
-    return faixa + D('display:flex;justify-content:center;flex:none', D('display:flex;flex-direction:column;gap:' + GAP + 'px;flex:none', linhas));
-  }
-
-  function fichaBloco(d){
-    var cells = [];
-    if(isFinite(d.area) && d.area > 0) cells.push([d.area.toLocaleString('pt-BR',{maximumFractionDigits:2}) + ' m²', 'Área']);
-    if(isFinite(d.quartos) && d.quartos > 0) cells.push([String(d.quartos), d.quartos === 1 ? 'Quarto' : 'Quartos']);
-    if(isFinite(d.suites) && d.suites > 0) cells.push([String(d.suites), d.suites === 1 ? 'Suíte' : 'Suítes']);
-    if(isFinite(d.vagas) && d.vagas > 0) cells.push([String(d.vagas), d.vagas === 1 ? 'Vaga' : 'Vagas']);
-    if(!cells.length) return '';
-    return D('display:flex;background:#FFFFFF;border:1px solid #E1D9C4;flex:none', cells.map(function(c, i){
-      return D('flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0;padding:5px 6px;' + (i ? 'border-left:1px solid #E1D9C4' : ''),
-        D(SERIF + ';font-weight:700;font-size:22px;line-height:1.1;color:' + NAVY, esc(c[0])) +
-        D('font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:' + MUTED, c[1]));
-    }).join(''));
-  }
-
-  function sheet(d, inline, photoH, lvl){
-    lvl = lvl || 0;
-    var DFS = [14,13,12,11.5][lvl], DLH = [1.35,1.3,1.25,1.22][lvl], DGAP = [7,6,5,4][lvl];
-    function U(k){
-      var src = '';
-      if(k === 'logo') src = imgs.logo;
-      else if(k === 'foto') src = imgs.foto;
-      else src = imgs.fotos[parseInt(k.slice(1), 10)] || '';
-      return inline ? "url('" + src + "')" : 'var(--' + k + ')';
-    }
+  /* ---------- A imagem: valores mensais, cota do condomínio e garantias (prévia e exportação usam o mesmo HTML) ---------- */
+  function card(d){
     var c = calc(d);
-
-    var logoHtml = imgs.logo
-      ? D('width:170px;height:34px;background:' + U('logo') + ' left center/contain no-repeat')
-      : D(SERIF + ';font-weight:700;font-size:19px;color:' + NAVY + ';line-height:1.1;max-width:380px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária'));
-
-    var header = D('display:flex;flex-direction:column;gap:8px;flex:none',
-      D('display:flex;justify-content:space-between;align-items:center;min-height:30px', logoHtml +
-        D('font-size:12px;letter-spacing:0.2em;font-weight:600;color:' + NAVY, 'INFORMAÇÕES LOCATÍCIAS')) +
-      D('height:2px;background:' + GOLD + ';flex:none'));
-
-    var titulo = d.empreendimento ? esc(d.empreendimento) : PH('Nome do empreendimento');
-    var sub = [d.tipo, d.bairro].filter(Boolean).map(esc).join(' · ') || PH('Tipo · Bairro / região');
-    var codigo = d.codigo ? D('background:' + GOLDF + ';color:' + NAVY + ';font-size:12px;font-weight:600;letter-spacing:0.12em;padding:6px 12px;white-space:nowrap', 'CÓD. ' + esc(d.codigo)) : '';
-    var title = D('display:flex;flex-direction:column;gap:4px;flex:none',
-      D('display:flex;align-items:center;gap:16px;flex-wrap:wrap', D(SERIF + ';font-weight:600;font-size:40px;line-height:1.05;color:' + NAVY, titulo) + codigo) +
-      D('font-size:15px;color:' + SOFT, sub));
-
-    var ficha = fichaBloco(d);
-    var fotos = fotosBloco(d, U, photoH);
 
     var rows = [
       ['Aluguel', d.aluguel],
@@ -373,115 +268,42 @@ button:disabled{opacity:0.6;cursor:progress}
       ['Seguro incêndio (2,5%)', c.seguro],
       ['Taxas bancárias', TAXA_BANCARIA]
     ].map(function(r){
-      return D('display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid ' + LINE + ';font-size:14px',
+      return D('display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid ' + LINE + ';font-size:15px',
         '<span>' + r[0] + '</span><span style="font-weight:500;font-variant-numeric:tabular-nums">' + money(r[1]) + '</span>');
     }).join('');
 
     var condBox = '';
     if(isFinite(d.cond) && d.cond > 0){
-      condBox = D('border:1.5px solid ' + NAVY + ';padding:10px 16px;display:flex;flex-direction:column;gap:4px',
+      condBox = D('border:1.5px solid ' + NAVY + ';padding:12px 18px;display:flex;flex-direction:column;gap:4px',
         D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY, 'COTA DO CONDOMÍNIO') +
-        D(SERIF + ';font-weight:700;font-size:32px;color:' + NAVY + ';line-height:1.1', money(d.cond)) +
-        D('font-size:12.5px;line-height:1.45;color:' + SOFT, 'Valor à parte do total ao lado. ' + TEXTO_COND));
+        D(SERIF + ';font-weight:700;font-size:34px;color:' + NAVY + ';line-height:1.1', money(d.cond)) +
+        D('font-size:13px;line-height:1.45;color:' + SOFT, 'Valor à parte do total ao lado. ' + TEXTO_COND));
     }
     var garTxt = '';
     if(d.garMostrar && (d.garSeguro || d.garTitulo)){
-      garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.45;color:' + SOFT,
+      garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:' + SOFT,
         (d.garSeguro ? '<div><b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
         (d.garTitulo ? '<div><b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
     }
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
-      D('background:' + GOLDF + ';color:' + NAVY + ';padding:12px 16px;display:flex;flex-direction:column;gap:4px',
+      D('background:' + GOLDF + ';color:' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:4px',
         '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span><span style="font-weight:600;font-size:15px">Seguro Fiança · Título de Capitalização</span>') +
       garTxt);
-    var right = D('flex:1;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
+    var right = D('flex:1.12;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
 
-    var mainRow = D('display:flex;gap:28px;align-items:flex-start;flex:none',
-      D('flex:1;min-width:0;display:flex;flex-direction:column',
-        D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
-        D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:13px 16px;background:' + NAVY + ';color:#FFFFFF',
-          '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:30px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
-        D('margin-top:8px;font-size:12.5px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Observação:</b> Contrato de ' + d.prazo + ' meses.') +
-        '') +
-      right);
+    var consultorLn = (d.mostrarConsultor && d.consultor)
+      ? D('margin-top:4px;font-size:13px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Consultor(a):</b> ' + esc(d.consultor))
+      : '';
 
-    var linkBar = '';
-    if(d.link){
-      linkBar = '<div data-href="' + esc(d.link) + '" style="display:flex;align-items:center;gap:14px;border:1px solid ' + NAVY + ';padding:10px 16px;font-size:13px;flex:none">' +
-        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';white-space:nowrap">VER O IMÓVEL ONLINE</span>' +
-        '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + NAVY + ';text-decoration:underline">' + esc(linkCurto(d.link)) + '</span></div>';
-    }
+    var left = D('flex:1;min-width:0;display:flex;flex-direction:column',
+      D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
+      D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:14px 18px;background:' + NAVY + ';color:#FFFFFF',
+        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:32px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
+      D('margin-top:8px;font-size:13px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Observação:</b> Contrato de ' + d.prazo + ' meses.') +
+      consultorLn);
 
-    var fotoHtml = imgs.foto
-      ? D('width:52px;height:52px;border-radius:26px;background:#D8DDE7 ' + U('foto') + ' center/cover no-repeat;flex:none')
-      : D('width:52px;height:52px;border-radius:26px;background:#D8DDE7;display:flex;align-items:center;justify-content:center;flex:none',
-          '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3A4660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg>');
-
-    var footer = D('display:flex;flex-direction:column;gap:10px;flex:none',
-      D('font-size:12px;color:' + MUTED + ';text-align:center;line-height:1.45',
-        'Emitido em ' + d.emissao + ' · Válido até ' + d.validade + ' · Sujeito a alterações e à aprovação cadastral.') +
-      D('border-top:2px solid ' + GOLD + ';padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px',
-        D('display:flex;align-items:center;gap:14px', fotoHtml +
-          D('display:flex;flex-direction:column;gap:2px',
-            '<span style="font-size:12px;letter-spacing:0.14em;color:' + MUTED + '">SEU CONSULTOR</span>' +
-            '<span style="' + SERIF + ';font-weight:700;font-size:22px;color:' + NAVY + '">' + (d.consultor ? esc(d.consultor) : PH('Nome do consultor')) + '</span>')) +
-        (imgs.logo ? D(SERIF + ';font-weight:600;font-size:22px;line-height:1.1;color:' + NAVY + ';text-align:right;padding-bottom:6px', d.imobiliaria ? esc(d.imobiliaria) : PH('Nome da imobiliária')) : '')));
-
-    return '<div id="sheet" style="width:794px;min-height:' + PAGE_H + 'px;background:' + IVORY + ';padding:30px 52px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;' + SANS + ';color:' + INK + ';box-sizing:border-box">' +
-      header + title + ficha + fotos + mainRow + linkBar + footer + '</div>';
-  }
-
-  /* Mede a folha fora da tela e reduz a altura das fotos se o conteúdo passar de uma página A4. */
-  var measureHost = null;
-  function measure(html){
-    if(!measureHost){
-      measureHost = document.createElement('div');
-      measureHost.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;visibility:hidden;pointer-events:none';
-      document.body.appendChild(measureHost);
-    }
-    measureHost.innerHTML = html;
-    var h = measureHost.firstElementChild.getBoundingClientRect().height;
-    measureHost.innerHTML = '';
-    return h;
-  }
-  /* Tenta caber em uma página A4: primeiro encolhe as fotos (até um mínimo), depois compacta os destaques. */
-  function fitSheet(d, inline){
-    var MINPH = 300, START = 460, last = '';
-    for(var lvl = 0; lvl < 4; lvl++){
-      var html = sheet(d, inline, START, lvl);
-      var h = measure(html);
-      last = html;
-      if(h <= PAGE_H + 1) return html;
-      if(imgs.fotos.length){
-        var ph = Math.floor(START - (h - PAGE_H)) - 4;
-        if(ph >= MINPH){
-          html = sheet(d, inline, ph, lvl);
-          h = measure(html);
-          if(h <= PAGE_H + 1) return html;
-          ph = Math.floor(ph - (h - PAGE_H)) - 2;
-          if(ph >= MINPH){
-            html = sheet(d, inline, ph, lvl);
-            if(measure(html) <= PAGE_H + 1) return html;
-          }
-        }
-        last = sheet(d, inline, MINPH, lvl);
-      }
-    }
-    if(imgs.fotos.length){
-      var hh = measure(sheet(d, inline, START, 3));
-      var p3 = Math.max(260, Math.floor(START - (hh - PAGE_H)) - 4);
-      last = sheet(d, inline, p3, 3);
-    }
-    return last; /* conteúdo muito longo: a página fica mais alta que o A4 */
-  }
-
-  function applyVars(el){
-    var keys = ['f0','f1','f2','f3','foto','logo'];
-    keys.forEach(function(k){
-      var src = k === 'logo' ? imgs.logo : k === 'foto' ? imgs.foto : (imgs.fotos[parseInt(k.slice(1), 10)] || '');
-      if(src) el.style.setProperty('--' + k, 'url("' + src + '")');
-      else el.style.removeProperty('--' + k);
-    });
+    return '<div id="sheet" style="width:' + CARD_W + 'px;background:' + IVORY + ';padding:30px 34px 26px;box-sizing:border-box;' + SANS + ';color:' + INK + '">' +
+      D('display:flex;gap:24px;align-items:flex-start', left + right) + '</div>';
   }
 
   /* ---------- Prévia ---------- */
@@ -495,111 +317,26 @@ button:disabled{opacity:0.6;cursor:progress}
       '<span>Seguro incêndio (2,5%)</span><b>' + money(c.seguro) + '</b>' +
       '<span>Taxas bancárias</span><b>' + money(TAXA_BANCARIA) + '</b>' +
       '<div class="tot"><span>Total (aluguel + taxas)</span><span>' + money(c.total) + '</span></div>';
-    applyVars($('scaler'));
-    $('sheetHost').innerHTML = fitSheet(d, false);
+    $('sheetHost').innerHTML = card(d);
     fit();
   }
   function fit(){
     var stage = $('stage'), scaler = $('scaler');
     var inner = (stage.clientWidth || 822) - 28;
-    var s = Math.min(1, inner / 794);
+    var s = Math.min(1, inner / CARD_W);
     scaler.style.transform = 'scale(' + s + ')';
-    scaler.style.marginLeft = Math.max(0, Math.round((inner - 794 * s) / 2)) + 'px';
+    scaler.style.marginLeft = Math.max(0, Math.round((inner - CARD_W * s) / 2)) + 'px';
     var h = scaler.offsetHeight;
     stage.style.height = (Math.ceil(h * s) + 30) + 'px';
   }
   if(window.ResizeObserver){ new ResizeObserver(fit).observe($('stage')); }
   window.addEventListener('resize', fit);
 
-  /* ---------- Imagens ---------- */
-  function loadImage(file, maxSide, mime, quality){
-    return new Promise(function(resolve, reject){
-      var fr = new FileReader();
-      fr.onerror = function(){ reject(new Error('Não consegui ler a imagem.')); };
-      fr.onload = function(){
-        var img = new Image();
-        img.onerror = function(){ reject(new Error('Arquivo de imagem inválido.')); };
-        img.onload = function(){
-          var k = Math.min(1, maxSide / Math.max(img.width, img.height));
-          var cv = document.createElement('canvas');
-          cv.width = Math.max(1, Math.round(img.width * k));
-          cv.height = Math.max(1, Math.round(img.height * k));
-          var ctx = cv.getContext('2d');
-          if(mime === 'image/jpeg'){ ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,cv.width,cv.height); }
-          ctx.drawImage(img, 0, 0, cv.width, cv.height);
-          resolve(cv.toDataURL(mime, quality));
-        };
-        img.src = fr.result;
-      };
-      fr.readAsDataURL(file);
-    });
-  }
-  function bindImage(inputId, key, thumbId, delId, maxSide, mime, quality){
-    var input = $(inputId), thumb = $(thumbId), del = $(delId);
-    function show(){
-      var has = !!imgs[key];
-      thumb.hidden = !has; del.hidden = !has;
-      if(has) thumb.style.backgroundImage = 'url("' + imgs[key] + '")';
-    }
-    input.addEventListener('change', function(){
-      var f = input.files && input.files[0];
-      if(!f) return;
-      loadImage(f, maxSide, mime, quality).then(function(url){
-        imgs[key] = url; show(); savePerfil(); render(); setMsg('');
-      }).catch(function(e){ setMsg(e.message, true); });
-    });
-    del.addEventListener('click', function(){
-      imgs[key] = ''; input.value = ''; show(); savePerfil(); render();
-    });
-    return show;
-  }
-
-  /* Fotos do imóvel (até 4) */
-  function renderFotos(){
-    var list = $('fotosList');
-    list.innerHTML = '';
-    imgs.fotos.forEach(function(src, i){
-      var item = document.createElement('div');
-      item.className = 'fotoItem';
-      var pic = document.createElement('div');
-      pic.className = 'pic';
-      pic.style.backgroundImage = 'url("' + src + '")';
-      item.appendChild(pic);
-      if(i === 0){
-        var tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = 'CAPA'; item.appendChild(tag);
-      }else{
-        var cap = document.createElement('button'); cap.type = 'button'; cap.className = 'link'; cap.textContent = 'Usar como capa';
-        cap.addEventListener('click', function(){ var x = imgs.fotos.splice(i, 1)[0]; imgs.fotos.unshift(x); renderFotos(); render(); });
-        item.appendChild(cap);
-      }
-      var del = document.createElement('button'); del.type = 'button'; del.className = 'link'; del.textContent = 'Remover';
-      del.addEventListener('click', function(){ imgs.fotos.splice(i, 1); renderFotos(); render(); });
-      item.appendChild(del);
-      list.appendChild(item);
-    });
-    $('fotosHint').textContent = imgs.fotos.length + ' de ' + MAX_FOTOS + ' fotos.' + (imgs.fotos.length >= MAX_FOTOS ? ' Remova uma para trocar.' : '');
-    $('fotosFile').disabled = imgs.fotos.length >= MAX_FOTOS;
-  }
-  $('fotosFile').addEventListener('change', async function(){
-    var files = Array.prototype.slice.call($('fotosFile').files || []);
-    var livres = MAX_FOTOS - imgs.fotos.length;
-    var usados = files.slice(0, Math.max(0, livres));
-    try{
-      for(var i = 0; i < usados.length; i++){
-        imgs.fotos.push(await loadImage(usados[i], 1500, 'image/jpeg', 0.82));
-      }
-      if(files.length > usados.length) setMsg('Só cabem ' + MAX_FOTOS + ' fotos. As demais foram ignoradas.');
-      else setMsg('');
-    }catch(e){ setMsg(e.message, true); }
-    $('fotosFile').value = '';
-    renderFotos(); render();
-  });
-
   /* ---------- Perfil salvo no navegador ---------- */
   function savePerfil(){
     try{
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        consultor: perfil.consultor, imobiliaria: perfil.imobiliaria, foto: imgs.foto, logo: imgs.logo,
+        consultor: perfil.consultor, mostrarConsultor: perfil.mostrarConsultor,
         garMostrar: perfil.garMostrar, garSeguro: perfil.garSeguro, garTitulo: perfil.garTitulo
       }));
     }catch(e){ /* sem armazenamento: segue funcionando */ }
@@ -610,13 +347,11 @@ button:disabled{opacity:0.6;cursor:progress}
       if(!raw) return;
       var p = JSON.parse(raw) || {};
       perfil.consultor = p.consultor || '';
-      perfil.imobiliaria = (typeof p.imobiliaria === 'string' && p.imobiliaria) ? p.imobiliaria : IMOBILIARIA_PADRAO;
+      perfil.mostrarConsultor = p.mostrarConsultor === true;
       perfil.garMostrar = p.garMostrar !== false;
       perfil.garSeguro = typeof p.garSeguro === 'string' ? p.garSeguro : GAR_SEGURO_PADRAO;
       if(perfil.garSeguro === GAR_SEGURO_ANTIGO) perfil.garSeguro = GAR_SEGURO_PADRAO;
       perfil.garTitulo = typeof p.garTitulo === 'string' ? p.garTitulo : GAR_TITULO_PADRAO;
-      imgs.foto = p.foto || '';
-      imgs.logo = p.logo || '';
     }catch(e){}
   }
 
@@ -627,18 +362,22 @@ button:disabled{opacity:0.6;cursor:progress}
     m.className = isErr ? 'err' : '';
   }
 
-  /* ---------- Validação ---------- */
+  /* ---------- Validação: só o que aparece na imagem é obrigatório ---------- */
   function validar(d){
     var faltas = [];
-    if(!d.consultor || !d.imobiliaria) faltas.push({ msg:'Preencha seu nome e o nome da imobiliária em "Seu perfil".', el:'consultor', perfil:true });
-    if(!d.codigo) faltas.push({ msg:'Informe o código do imóvel.', el:'codigo' });
-    if(!d.tipo) faltas.push({ msg:'Escolha ou digite o tipo do imóvel.', el: $('tipo').value === '__outro' ? 'tipoOutro' : 'tipo' });
-    if(!d.empreendimento) faltas.push({ msg:'Informe o nome do empreendimento.', el:'empreendimento' });
-    if(!d.bairro) faltas.push({ msg:'Informe o bairro ou a região.', el:'bairro' });
-    if(d.linkRaw && !d.link) faltas.push({ msg:'O link do imóvel não parece válido. Confira ou apague o campo.', el:'link' });
     if(!isFinite(d.aluguel)) faltas.push({ msg:'Informe o valor do aluguel.', el:'aluguel' });
     if(!isFinite(d.iptu)) faltas.push({ msg:'Informe o IPTU (digite 0 se não houver).', el:'iptu' });
+    if(d.mostrarConsultor && !d.consultor) faltas.push({ msg:'Preencha seu nome em "Seu perfil" ou desmarque "Mostrar meu nome na imagem".', el:'consultor', perfil:true });
     return faltas;
+  }
+  function primeiraFalta(d){
+    var faltas = validar(d);
+    if(!faltas.length) return false;
+    var f = faltas[0];
+    if(f.perfil) $('perfilBox').open = true;
+    setMsg(f.msg, true);
+    var el = $(f.el); if(el) el.focus();
+    return true;
   }
 
   /* ---------- Exportação ---------- */
@@ -661,49 +400,18 @@ button:disabled{opacity:0.6;cursor:progress}
     });
   }
 
-  /* Posições das palavras e dos links, para o PDF ter texto selecionável e link clicável. */
-  function coletar(node){
-    var base = node.getBoundingClientRect();
-    var words = [], links = [];
-    var walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-    var n;
-    while((n = walker.nextNode())){
-      var txt = n.nodeValue;
-      if(!txt || !txt.trim()) continue;
-      var el = n.parentElement;
-      if(!el || el.closest('svg')) continue;
-      var cs = getComputedStyle(el);
-      var fs = parseFloat(cs.fontSize) || 14;
-      var up = cs.textTransform === 'uppercase';
-      var re = /\S+/g, m;
-      while((m = re.exec(txt))){
-        var rg = document.createRange();
-        rg.setStart(n, m.index); rg.setEnd(n, m.index + m[0].length);
-        var r = rg.getClientRects()[0];
-        if(!r || !r.width) continue;
-        words.push({ t: up ? m[0].toUpperCase() : m[0], x: r.left - base.left, y: r.bottom - base.top - fs * 0.22, fs: fs });
-      }
-    }
-    Array.prototype.forEach.call(node.querySelectorAll('[data-href]'), function(a){
-      var r = a.getBoundingClientRect();
-      links.push({ url: a.getAttribute('data-href'), x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height });
-    });
-    return { words: words, links: links };
-  }
-
-  async function renderSheet(d){
+  async function renderCard(d){
     var host = document.createElement('div');
-    host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;visibility:hidden';
-    host.innerHTML = fitSheet(d, true);
+    host.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + CARD_W + 'px;visibility:hidden';
+    host.innerHTML = card(d);
     document.body.appendChild(host);
     var node = host.firstElementChild;
-    var H = Math.max(PAGE_H, Math.ceil(node.getBoundingClientRect().height));
-    var meta = coletar(node);
+    var H = Math.ceil(node.getBoundingClientRect().height);
     var xhtml = new XMLSerializer().serializeToString(node);
     document.body.removeChild(host);
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="794" height="' + H + '">' +
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + CARD_W + '" height="' + H + '">' +
       '<style>' + FONT_CSS + '</style>' +
-      '<foreignObject x="0" y="0" width="794" height="' + H + '">' + xhtml + '</foreignObject></svg>';
+      '<foreignObject x="0" y="0" width="' + CARD_W + '" height="' + H + '">' + xhtml + '</foreignObject></svg>';
     // a primeira carga aquece as fontes embutidas; a segunda é a usada na imagem final
     var warm = await loadSvg(svg);
     var t = document.createElement('canvas'); t.width = 8; t.height = 8;
@@ -711,73 +419,33 @@ button:disabled{opacity:0.6;cursor:progress}
     await nextFrame(250);
     var img = await loadSvg(svg);
     await nextFrame(50);
-    var SC = 2.5;
     var cv = document.createElement('canvas');
-    cv.width = Math.round(794 * SC); cv.height = Math.round(H * SC);
+    cv.width = Math.round(CARD_W * SCALE); cv.height = Math.round(H * SCALE);
     var ctx = cv.getContext('2d');
     ctx.fillStyle = IVORY; ctx.fillRect(0, 0, cv.width, cv.height);
     ctx.drawImage(img, 0, 0, cv.width, cv.height);
-    return { canvas: cv, H: H, words: meta.words, links: meta.links };
-  }
-
-  function montarPdf(r){
-    var w = 210, h = r.canvas.height / r.canvas.width * 210, x0 = 0;
-    var pageH = 297;
-    if(h > 297 && h <= 297 * 1.16){ var k = 297 / h; w = 210 * k; h = 297; x0 = (210 - w) / 2; }   /* até 16% acima: reduz para caber no A4 */
-    else if(h > 297){ pageH = h; }                                                                 /* muito longo: página mais alta, sem achatar */
-    var pdf = new window.jspdf.jsPDF({ unit:'mm', format:[210, pageH], orientation:'portrait', compress:true });
-    pdf.setFillColor(250,247,240);
-    pdf.rect(0, 0, 210, pageH, 'F');
-    pdf.addImage(r.canvas.toDataURL('image/jpeg', 0.93), 'JPEG', x0, 0, w, h);
-    var mm = w / 794;
-    // camada de texto invisível: permite selecionar, copiar e pesquisar
-    try{
-      pdf.setFont('helvetica', 'normal');
-      r.words.forEach(function(wd){
-        var t = wd.t.replace(/[–—]/g, '-').replace(/…/g, '...').replace(/[^ -ÿ]/g, '');
-        if(!t) return;
-        pdf.setFontSize(wd.fs * 0.75 * (w / 210));
-        pdf.text(t, x0 + wd.x * mm, wd.y * mm, { renderingMode: 'invisible' });
-      });
-    }catch(e){ /* sem camada de texto: o PDF continua válido */ }
-    try{
-      r.links.forEach(function(l){ pdf.link(x0 + l.x * mm, l.y * mm, l.w * mm, l.h * mm, { url: l.url }); });
-    }catch(e){}
-    return pdf.output('blob');
+    return { canvas: cv, H: H };
   }
 
   var FORMATOS = {
-    pdf: { ext:'pdf', rotulo:'PDF' },
     png: { ext:'png', rotulo:'PNG' },
     jpg: { ext:'jpg', rotulo:'JPEG' }
   };
+  var BOTOES = ['btnPng','btnJpg','btnImg'];
+  function travar(on){ BOTOES.forEach(function(id){ $(id).disabled = on; }); }
+
   async function exportar(fmt){
     var d = read();
-    var faltas = validar(d);
-    if(faltas.length){
-      var f = faltas[0];
-      if(f.perfil) $('perfilBox').open = true;
-      setMsg(f.msg, true);
-      var el = $(f.el); if(el) el.focus();
-      return;
-    }
-    if(fmt === 'pdf' && !window.jspdf){
-      setMsg('Não consegui carregar o gerador de PDF. Verifique a conexão e recarregue a página. Você ainda pode baixar em PNG ou JPEG.', true);
-      return;
-    }
+    if(primeiraFalta(d)) return;
     var info = FORMATOS[fmt];
     var dl = null;
     try{ dl = (window.claude && window.claude.use) ? await window.claude.use('downloads') : null; }catch(e){ dl = null; }
-    var botoes = ['btnPdf','btnPng','btnJpg'];
-    botoes.forEach(function(id){ $(id).disabled = true; });
+    travar(true);
     $('saveBox').hidden = true;
     setMsg('Gerando ' + info.rotulo + '…');
     try{
-      var r = await renderSheet(d);
-      var blob;
-      if(fmt === 'pdf') blob = montarPdf(r);
-      else if(fmt === 'png') blob = await toBlob(r.canvas, 'image/png');
-      else blob = await toBlob(r.canvas, 'image/jpeg', 0.95);
+      var r = await renderCard(d);
+      var blob = fmt === 'png' ? await toBlob(r.canvas, 'image/png') : await toBlob(r.canvas, 'image/jpeg', 0.95);
       var nome = 'Informacoes-locaticias-' + (slug(d.codigo) || 'imovel') + '-' + (slug(d.empreendimento) || 'locacao') + '.' + info.ext;
       if(dl){
         await dl.save({ filename: nome, data: blob });
@@ -793,9 +461,9 @@ button:disabled{opacity:0.6;cursor:progress}
           setMsg(info.rotulo + ' gerado: ' + nome);
         }else{
           $('saveImg').src = r.canvas.toDataURL('image/jpeg', 0.92);
-          $('saveHint').textContent = 'Se o arquivo não baixou, clique com o botão direito na imagem abaixo e escolha "Salvar imagem como…" (no celular, segure o dedo sobre a imagem). Para baixar direto, abra a calculadora pelo endereço do site.';
+          $('saveHint').textContent = 'Se o arquivo não baixou, clique com o botão direito na imagem abaixo e escolha "Salvar imagem como…" (no celular, segure o dedo sobre a imagem).';
           $('saveBox').hidden = false;
-          setMsg('Proposta pronta. Veja as opções para salvar logo abaixo.');
+          setMsg('Imagem pronta. Veja as opções para salvar logo abaixo.');
           try{ $('saveBox').scrollIntoView({ block:'nearest' }); }catch(e4){}
         }
       }
@@ -804,7 +472,29 @@ button:disabled{opacity:0.6;cursor:progress}
       if(err && err.code === 'declined') setMsg('Download cancelado.');
       else setMsg('Não foi possível gerar o ' + info.rotulo + ' (' + ((err && (err.code || err.name || err.message)) || 'erro') + '). Tente de novo.', true);
     }finally{
-      botoes.forEach(function(id){ $(id).disabled = false; });
+      travar(false);
+    }
+  }
+
+  /* Copia a imagem para a área de transferência: dá para colar direto no WhatsApp Web. */
+  async function copiarImagem(){
+    var d = read();
+    if(primeiraFalta(d)) return;
+    if(!(navigator.clipboard && window.ClipboardItem)){
+      setMsg('Este navegador não permite copiar a imagem. Use "Baixar PNG" ou "Baixar JPEG".', true);
+      return;
+    }
+    travar(true);
+    setMsg('Gerando imagem…');
+    try{
+      var pronto = renderCard(d).then(function(r){ return toBlob(r.canvas, 'image/png'); });
+      await navigator.clipboard.write([ new ClipboardItem({ 'image/png': pronto }) ]);
+      setMsg('Imagem copiada. É só colar (Ctrl+V) na conversa.');
+    }catch(err){
+      try{ console.error('Copiar imagem', err); }catch(e2){}
+      setMsg('Não consegui copiar a imagem. Use "Baixar PNG" ou "Baixar JPEG".', true);
+    }finally{
+      travar(false);
     }
   }
 
@@ -813,15 +503,17 @@ button:disabled{opacity:0.6;cursor:progress}
   function textoWhats(d){
     var c = calc(d);
     var L = [];
-    L.push('*' + d.empreendimento + ' · Cód. ' + d.codigo + '*');
-    L.push([d.tipo, d.bairro].filter(Boolean).join(' · '));
+    var titulo = [d.empreendimento, d.codigo ? 'Cód. ' + d.codigo : ''].filter(Boolean).join(' · ');
+    if(titulo) L.push('*' + titulo + '*');
+    var sub = [d.tipo, d.bairro].filter(Boolean).join(' · ');
+    if(sub) L.push(sub);
     var fich = [];
     if(isFinite(d.area) && d.area > 0) fich.push(d.area.toLocaleString('pt-BR',{maximumFractionDigits:2}) + ' m²');
     if(isFinite(d.quartos) && d.quartos > 0) fich.push(d.quartos + (d.quartos === 1 ? ' quarto' : ' quartos'));
     if(isFinite(d.suites) && d.suites > 0) fich.push(d.suites + (d.suites === 1 ? ' suíte' : ' suítes'));
     if(isFinite(d.vagas) && d.vagas > 0) fich.push(d.vagas + (d.vagas === 1 ? ' vaga' : ' vagas'));
     if(fich.length) L.push(fich.join(' · '));
-    L.push('');
+    if(L.length) L.push('');
     L.push('*Informações locatícias:*');
     L.push('Aluguel: ' + brl(d.aluguel));
     L.push('IPTU: ' + brl(d.iptu));
@@ -849,8 +541,8 @@ button:disabled{opacity:0.6;cursor:progress}
   }
   async function copiar(){
     var d = read();
-    if(!isFinite(d.aluguel) || !d.empreendimento || !d.codigo){
-      setMsg('Preencha código, empreendimento e aluguel para gerar o texto.', true);
+    if(!isFinite(d.aluguel) || !isFinite(d.iptu)){
+      setMsg('Preencha aluguel e IPTU para gerar o texto.', true);
       return;
     }
     var t = textoWhats(d);
@@ -865,15 +557,12 @@ button:disabled{opacity:0.6;cursor:progress}
     }
   }
 
-  /* ---------- Limpar ---------- */
+  /* ---------- Limpar (o perfil do consultor é mantido) ---------- */
   function limpar(){
     ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro'].forEach(function(id){ $(id).value = ''; });
     $('prazo').value = '30';
     $('tipo').value = '';
     $('tipoOutroBox').hidden = true;
-    imgs.fotos = [];
-    $('fotosFile').value = '';
-    renderFotos();
     $('fallback').style.display = 'none';
     $('saveBox').hidden = true;
     setMsg('');
@@ -888,18 +577,14 @@ button:disabled{opacity:0.6;cursor:progress}
 
   loadPerfil();
   $('consultor').value = perfil.consultor;
-  $('imobiliaria').value = perfil.imobiliaria;
+  $('mostrarConsultor').checked = perfil.mostrarConsultor;
   $('garMostrar').checked = perfil.garMostrar;
   $('garSeguro').value = perfil.garSeguro;
   $('garTitulo').value = perfil.garTitulo;
   $('perfilBox').open = !perfil.consultor;
 
-  var showFoto = bindImage('fotoFile','foto','fotoThumb','fotoDel', 320, 'image/jpeg', 0.85);
-  var showLogo = bindImage('logoFile','logo','logoThumb','logoDel', 700, 'image/png', 0.92);
-  showFoto(); showLogo(); renderFotos();
-
   $('consultor').addEventListener('input', function(e){ perfil.consultor = e.target.value; savePerfil(); schedule(); });
-  $('imobiliaria').addEventListener('input', function(e){ perfil.imobiliaria = e.target.value; savePerfil(); schedule(); });
+  $('mostrarConsultor').addEventListener('change', function(e){ perfil.mostrarConsultor = e.target.checked; savePerfil(); schedule(); });
   $('garMostrar').addEventListener('change', function(e){ perfil.garMostrar = e.target.checked; savePerfil(); schedule(); });
   $('garSeguro').addEventListener('input', function(e){ perfil.garSeguro = e.target.value; savePerfil(); schedule(); });
   $('garTitulo').addEventListener('input', function(e){ perfil.garTitulo = e.target.value; savePerfil(); schedule(); });
@@ -919,9 +604,9 @@ button:disabled{opacity:0.6;cursor:progress}
     schedule();
   });
   $('form').addEventListener('submit', function(e){ e.preventDefault(); });
-  $('btnPdf').addEventListener('click', function(){ exportar('pdf'); });
   $('btnPng').addEventListener('click', function(){ exportar('png'); });
   $('btnJpg').addEventListener('click', function(){ exportar('jpg'); });
+  $('btnImg').addEventListener('click', copiarImagem);
   $('btnCopy').addEventListener('click', copiar);
   $('btnClear').addEventListener('click', limpar);
 
