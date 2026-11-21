@@ -290,9 +290,9 @@ button:disabled{opacity:0.6;cursor:progress}
     var garTxt = '';
     if(d.garMostrar && (d.garSeguro || d.garTitulo)){
       garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:' + SOFT,
-        (d.garSeguro ? '<div><b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
-        ((d.garSeguro && d.garTitulo) ? D('font-size:13px;font-weight:700;letter-spacing:0.18em;color:' + NAVY + ';text-align:center', 'OU') : '') +
-        (d.garTitulo ? '<div><b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
+        (d.garSeguro ? '<div>• <b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
+        ((d.garSeguro && d.garTitulo) ? D('font-size:13px;font-weight:700;color:' + NAVY, '• OU') : '') +
+        (d.garTitulo ? '<div>• <b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
     }
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
       D('background:' + GOLDF + ';color:' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:4px',
