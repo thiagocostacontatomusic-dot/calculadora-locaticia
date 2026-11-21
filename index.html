@@ -99,6 +99,11 @@ button:disabled{opacity:0.6;cursor:progress}
   </details>
 
   <fieldset>
+    <legend>Título do imóvel</legend>
+    <div class="field"><label for="tituloImovel">Título que aparece no topo da imagem (opcional)</label><input type="text" id="tituloImovel" placeholder="Ex.: Apartamento 3 suítes · Batel"></div>
+  </fieldset>
+
+  <fieldset>
     <legend>Valores</legend>
     <div class="row2">
       <div class="field"><label for="aluguel">Aluguel</label><div class="money"><span>R$</span><input type="text" id="aluguel" inputmode="decimal" placeholder="0,00"></div></div>
@@ -227,6 +232,7 @@ button:disabled{opacity:0.6;cursor:progress}
     return {
       codigo: $('codigo').value.trim(),
       tipo: tipoFinal(),
+      tituloImovel: $('tituloImovel').value.trim(),
       empreendimento: $('empreendimento').value.trim(),
       bairro: $('bairro').value.trim(),
       linkRaw: $('link').value.trim(),
@@ -290,8 +296,7 @@ button:disabled{opacity:0.6;cursor:progress}
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
       D('background:' + GOLDF + ';color:' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:4px',
         '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span>' +
-        '<span style="font-weight:600;font-size:15px">' + (d.segFianca ? 'Seguro Fiança aprovado: ' + esc(d.segFianca) : 'Seguro Fiança de 10% a 15%') + '</span>' +
-        '<span style="font-weight:600;font-size:15px">Título de Capitalização</span>') +
+        '<span style="font-weight:600;font-size:15px">' + (d.segFianca ? 'Seguro Fiança aprovado: ' + esc(d.segFianca) : 'Seguro Fiança de 10% a 15%') + '</span>') +
       garTxt);
     var right = D('flex:1.12;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
 
@@ -307,6 +312,7 @@ button:disabled{opacity:0.6;cursor:progress}
       consultorLn);
 
     return '<div id="sheet" style="width:' + CARD_W + 'px;background:' + IVORY + ';padding:30px 34px 26px;box-sizing:border-box;' + SANS + ';color:' + INK + '">' +
+      (d.tituloImovel ? D(SERIF + ';font-weight:700;font-size:28px;line-height:1.2;color:' + NAVY + ';padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid ' + GOLD, esc(d.tituloImovel)) : '') +
       D('display:flex;gap:24px;align-items:flex-start', left + right) + '</div>';
   }
 
@@ -450,7 +456,7 @@ button:disabled{opacity:0.6;cursor:progress}
     try{
       var r = await renderCard(d);
       var blob = fmt === 'png' ? await toBlob(r.canvas, 'image/png') : await toBlob(r.canvas, 'image/jpeg', 0.95);
-      var nome = 'Informacoes-locaticias-' + (slug(d.codigo) || 'imovel') + '-' + (slug(d.empreendimento) || 'locacao') + '.' + info.ext;
+      var nome = 'Informacoes-locaticias-' + (slug(d.codigo) || 'imovel') + '-' + (slug(d.tituloImovel || d.empreendimento) || 'locacao') + '.' + info.ext;
       if(dl){
         await dl.save({ filename: nome, data: blob });
         setMsg(info.rotulo + ' pronto: ' + nome);
@@ -563,7 +569,7 @@ button:disabled{opacity:0.6;cursor:progress}
 
   /* ---------- Limpar (o perfil do consultor é mantido) ---------- */
   function limpar(){
-    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','segFianca'].forEach(function(id){ $(id).value = ''; });
+    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','segFianca','tituloImovel'].forEach(function(id){ $(id).value = ''; });
     $('prazo').value = '30';
     $('tipo').value = '';
     $('tipoOutroBox').hidden = true;
@@ -592,7 +598,7 @@ button:disabled{opacity:0.6;cursor:progress}
   $('garMostrar').addEventListener('change', function(e){ perfil.garMostrar = e.target.checked; savePerfil(); schedule(); });
   $('garSeguro').addEventListener('input', function(e){ perfil.garSeguro = e.target.value; savePerfil(); schedule(); });
   $('garTitulo').addEventListener('input', function(e){ perfil.garTitulo = e.target.value; savePerfil(); schedule(); });
-  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo','segFianca'].forEach(function(id){
+  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo','segFianca','tituloImovel'].forEach(function(id){
     $(id).addEventListener('input', schedule);
   });
   ['aluguel','iptu','cond'].forEach(function(id){
