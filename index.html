@@ -291,6 +291,7 @@ button:disabled{opacity:0.6;cursor:progress}
     if(d.garMostrar && (d.garSeguro || d.garTitulo)){
       garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:' + SOFT,
         (d.garSeguro ? '<div><b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
+        ((d.garSeguro && d.garTitulo) ? D('font-size:13px;font-weight:700;letter-spacing:0.18em;color:' + NAVY + ';text-align:center', 'OU') : '') +
         (d.garTitulo ? '<div><b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
     }
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
@@ -542,8 +543,9 @@ button:disabled{opacity:0.6;cursor:progress}
     L.push('');
     L.push('Observação: Contrato de ' + d.prazo + ' meses.');
     L.push('');
-    L.push('Trabalhamos com as seguintes modalidades de garantia para locação:');
+    L.push('Trabalhamos com duas modalidades de garantia para locação (uma OU a outra, não as duas):');
     L.push('* Seguro Fiança' + (d.segFianca ? ' (aprovado: ' + d.segFianca + ')' : ' (10% a 15%)') + ';');
+    L.push('OU');
     L.push('* Título de Capitalização;');
     L.push('');
     L.push('Emitido em ' + d.emissao + ' · Válido até ' + d.validade + '. Sujeito a alterações e à aprovação cadastral.');
