@@ -106,6 +106,7 @@ button:disabled{opacity:0.6;cursor:progress}
     </div>
     <div class="auto" id="auto" aria-live="polite"></div>
     <div class="field" style="max-width:200px"><label for="prazo">Prazo do contrato (meses)</label><input type="text" id="prazo" inputmode="numeric" value="30"><span class="hint">Padrão: 30 meses.</span></div>
+    <div class="field" style="max-width:360px"><label for="segFianca">Seguro Fiança (valor oficial da seguradora)</label><input type="text" id="segFianca" placeholder="Ex.: 12% ou R$ 1.850,00"><span class="hint">Deixe em branco para mostrar “10% a 15%”. Preencha depois da análise do cliente.</span></div>
     <div class="field"><label for="cond">Cota do condomínio (fora do total)</label><div class="money"><span>R$</span><input type="text" id="cond" inputmode="decimal" placeholder="0,00"></div>
       <span class="hint">Deixe em branco se não houver condomínio. O texto sobre consumo individual entra sozinho.</span></div>
   </fieldset>
@@ -234,6 +235,7 @@ button:disabled{opacity:0.6;cursor:progress}
       quartos: parseInt0($('quartos').value),
       suites: parseInt0($('suites').value),
       vagas: parseInt0($('vagas').value),
+      segFianca: $('segFianca').value.trim(),
       prazo: (function(){ var n = parseInt0($('prazo').value); return (isFinite(n) && n > 0) ? n : 30; })(),
       aluguel: parseBRL($('aluguel').value),
       iptu: parseBRL($('iptu').value),
@@ -287,7 +289,9 @@ button:disabled{opacity:0.6;cursor:progress}
     }
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
       D('background:' + GOLDF + ';color:' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:4px',
-        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span><span style="font-weight:600;font-size:15px">Seguro Fiança · Título de Capitalização</span>') +
+        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span>' +
+        '<span style="font-weight:600;font-size:15px">' + (d.segFianca ? 'Seguro Fiança aprovado: ' + esc(d.segFianca) : 'Seguro Fiança de 10% a 15%') + '</span>' +
+        '<span style="font-weight:600;font-size:15px">Título de Capitalização</span>') +
       garTxt);
     var right = D('flex:1.12;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
 
@@ -533,7 +537,7 @@ button:disabled{opacity:0.6;cursor:progress}
     L.push('Observação: Contrato de ' + d.prazo + ' meses.');
     L.push('');
     L.push('Trabalhamos com as seguintes modalidades de garantia para locação:');
-    L.push('* Seguro Fiança;');
+    L.push('* Seguro Fiança' + (d.segFianca ? ' (aprovado: ' + d.segFianca + ')' : ' (10% a 15%)') + ';');
     L.push('* Título de Capitalização;');
     L.push('');
     L.push('Emitido em ' + d.emissao + ' · Válido até ' + d.validade + '. Sujeito a alterações e à aprovação cadastral.');
@@ -559,7 +563,7 @@ button:disabled{opacity:0.6;cursor:progress}
 
   /* ---------- Limpar (o perfil do consultor é mantido) ---------- */
   function limpar(){
-    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro'].forEach(function(id){ $(id).value = ''; });
+    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','segFianca'].forEach(function(id){ $(id).value = ''; });
     $('prazo').value = '30';
     $('tipo').value = '';
     $('tipoOutroBox').hidden = true;
@@ -588,7 +592,7 @@ button:disabled{opacity:0.6;cursor:progress}
   $('garMostrar').addEventListener('change', function(e){ perfil.garMostrar = e.target.checked; savePerfil(); schedule(); });
   $('garSeguro').addEventListener('input', function(e){ perfil.garSeguro = e.target.value; savePerfil(); schedule(); });
   $('garTitulo').addEventListener('input', function(e){ perfil.garTitulo = e.target.value; savePerfil(); schedule(); });
-  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo'].forEach(function(id){
+  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo','segFianca'].forEach(function(id){
     $(id).addEventListener('input', schedule);
   });
   ['aluguel','iptu','cond'].forEach(function(id){
