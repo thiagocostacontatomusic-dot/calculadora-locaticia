@@ -92,9 +92,7 @@ button:disabled{opacity:0.6;cursor:progress}
       <p class="hint" style="margin:0">Fica salvo neste navegador. Se trocar de computador ou limpar o navegador, é só preencher de novo.</p>
       <div class="field"><label for="consultor">Nome do consultor</label><input type="text" id="consultor" placeholder="Seu nome"></div>
       <div class="check"><input type="checkbox" id="mostrarConsultor"><label for="mostrarConsultor">Mostrar meu nome na imagem</label></div>
-      <div class="check"><input type="checkbox" id="garMostrar" checked><label for="garMostrar">Explicar as garantias na imagem</label></div>
-      <div class="field"><label for="garSeguro">Texto do Seguro Fiança</label><textarea id="garSeguro" style="min-height:64px"></textarea></div>
-      <div class="field"><label for="garTitulo">Texto do Título de Capitalização</label><textarea id="garTitulo" style="min-height:64px"></textarea></div>
+      <div class="check"><input type="checkbox" id="garMostrar" checked><label for="garMostrar">Explicar cada garantia na imagem (texto descritivo)</label></div>
     </div>
   </details>
 
@@ -110,10 +108,17 @@ button:disabled{opacity:0.6;cursor:progress}
       <div class="field"><label for="iptu">IPTU</label><div class="money"><span>R$</span><input type="text" id="iptu" inputmode="decimal" placeholder="0,00"></div></div>
     </div>
     <div class="auto" id="auto" aria-live="polite"></div>
+    <div class="field" style="max-width:360px"><label for="segFianca">Seguro Fiança (valor oficial da seguradora)</label><input type="text" id="segFianca" placeholder="Ex.: 12% ou R$ 1.850,00"><span class="hint">Em branco: aparece “10% a 15% do aluguel”, sem valor e fora do total. Preenchido depois da análise: entra na lista de valores e no total. Com “%”, calcula sobre o aluguel.</span></div>
+    <div class="field"><label for="cond">Cota do condomínio (valor base)</label><div class="money"><span>R$</span><input type="text" id="cond" inputmode="decimal" placeholder="0,00"></div>
+      <span class="hint">Entra na última linha antes do total, com o aviso de que é valor base e pode variar. Em branco se não houver condomínio.</span></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Condições da locação (aparecem à direita)</legend>
     <div class="field" style="max-width:200px"><label for="prazo">Prazo do contrato (meses)</label><input type="text" id="prazo" inputmode="numeric" value="30"><span class="hint">Padrão: 30 meses.</span></div>
-    <div class="field" style="max-width:360px"><label for="segFianca">Seguro Fiança (valor oficial da seguradora)</label><input type="text" id="segFianca" placeholder="Ex.: 12% ou R$ 1.850,00"><span class="hint">Deixe em branco para mostrar “10% a 15%”. Preencha depois da análise do cliente.</span></div>
-    <div class="field"><label for="cond">Cota do condomínio (fora do total)</label><div class="money"><span>R$</span><input type="text" id="cond" inputmode="decimal" placeholder="0,00"></div>
-      <span class="hint">Deixe em branco se não houver condomínio. O texto sobre consumo individual entra sozinho.</span></div>
+    <div class="field"><label for="condExtra">Outras condições (opcional, uma por linha)</label><textarea id="condExtra" style="min-height:64px" placeholder="Ex.: Reajuste anual pelo IGP-M"></textarea></div>
+    <div class="field"><label for="garSeguro">Texto do Seguro Fiança</label><textarea id="garSeguro" style="min-height:64px"></textarea></div>
+    <div class="field"><label for="garTitulo">Texto do Título de Capitalização</label><textarea id="garTitulo" style="min-height:64px"></textarea></div>
   </fieldset>
 
   <details class="card" id="imovelBox">
@@ -242,6 +247,7 @@ button:disabled{opacity:0.6;cursor:progress}
       suites: parseInt0($('suites').value),
       vagas: parseInt0($('vagas').value),
       segFianca: $('segFianca').value.trim(),
+      condExtra: $('condExtra').value.split(/\r?\n/).map(function(x){ return x.trim(); }).filter(Boolean),
       prazo: (function(){ var n = parseInt0($('prazo').value); return (isFinite(n) && n > 0) ? n : 30; })(),
       aluguel: parseBRL($('aluguel').value),
       iptu: parseBRL($('iptu').value),
@@ -255,20 +261,36 @@ button:disabled{opacity:0.6;cursor:progress}
       validade: fmtDate(addMonth(hoje))
     };
   }
+  /* Seguro Fiança digitado: valor em R$ (ex.: 200) ou percentual do aluguel (ex.: 12%). Em branco: só o texto "10% a 15%", sem valor. */
+  function fiancaInfo(d){
+    var s = String(d.segFianca || '').trim();
+    var r = { val:NaN, pct:NaN, txt:'' };
+    if(!s) return r;
+    if(s.indexOf('%') > -1){
+      var p = parseBRL(s.replace('%',''));
+      if(isFinite(p) && p > 0){ r.pct = p; if(isFinite(d.aluguel)) r.val = r2(d.aluguel * p / 100); else r.txt = s; return r; }
+      r.txt = s; return r;
+    }
+    var v = parseBRL(s);
+    if(isFinite(v) && v > 0 && !/[a-zA-Z]/.test(s)){ r.val = r2(v); return r; }
+    r.txt = s; return r;
+  }
   function calc(d){
     var fundo = isFinite(d.aluguel) ? r2(d.aluguel * PCT_FUNDO) : NaN;
     var seguro = isFinite(d.aluguel) ? r2(d.aluguel * PCT_SEGURO) : NaN;
+    var f = fiancaInfo(d);
     var total = NaN;
     if(isFinite(d.aluguel)){
-      total = r2(d.aluguel + (isFinite(d.iptu) ? d.iptu : 0) + fundo + seguro + TAXA_BANCARIA);
+      total = r2(d.aluguel + (isFinite(d.iptu) ? d.iptu : 0) + fundo + seguro + TAXA_BANCARIA +
+        (isFinite(f.val) ? f.val : 0) + (isFinite(d.cond) && d.cond > 0 ? d.cond : 0));
     }
-    return { fundo:fundo, seguro:seguro, total:total };
+    return { fundo:fundo, seguro:seguro, total:total, fianca:f };
   }
 
   /* ---------- A imagem: valores mensais, cota do condomínio e garantias (prévia e exportação usam o mesmo HTML) ---------- */
   function card(d){
-    var c = calc(d);
-
+    var c = calc(d), f = c.fianca;
+    var ROW = 'display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;font-size:15px';
     var rows = [
       ['Aluguel', d.aluguel],
       ['IPTU', d.iptu],
@@ -276,41 +298,55 @@ button:disabled{opacity:0.6;cursor:progress}
       ['Seguro incêndio (2,5%)', c.seguro],
       ['Taxas bancárias', TAXA_BANCARIA]
     ].map(function(r){
-      return D('display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid ' + LINE + ';font-size:15px',
+      return D(ROW + ';border-bottom:1px solid ' + LINE,
         '<span>' + r[0] + '</span><span style="font-weight:500;font-variant-numeric:tabular-nums">' + money(r[1]) + '</span>');
     }).join('');
 
-    var condBox = '';
+    /* Seguro Fiança: valor (se já analisado) ou o texto padrão, sem valor */
+    var fLabel = 'Seguro Fiança' + (isFinite(f.pct) && isFinite(f.val) ? ' (' + fmt(f.pct).replace(/,00$/, '') + '% do aluguel)' : '');
+    var fValor = isFinite(f.val)
+      ? '<span style="font-weight:500;font-variant-numeric:tabular-nums">' + money(f.val) + '</span>'
+      : '<span style="font-size:13px;color:' + SOFT + ';text-align:right">' + (f.txt ? esc(f.txt) : '10% a 15% do aluguel') + '</span>';
+    rows += D(ROW + ';border-bottom:1px solid ' + LINE, '<span>' + fLabel + '</span>' + fValor);
+
+    /* Cota do condomínio: última linha antes do total */
     if(isFinite(d.cond) && d.cond > 0){
-      condBox = D('border:1.5px solid ' + NAVY + ';padding:12px 18px;display:flex;flex-direction:column;gap:4px',
-        D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY, 'COTA DO CONDOMÍNIO') +
-        D(SERIF + ';font-weight:700;font-size:34px;color:' + NAVY + ';line-height:1.1', money(d.cond)) +
-        D('font-size:13px;line-height:1.45;color:' + SOFT, 'Valor à parte do total ao lado. ' + TEXTO_COND));
+      rows += D(ROW, '<span>Cota do condomínio</span><span style="white-space:nowrap;font-weight:500;font-variant-numeric:tabular-nums">' + money(d.cond) + '</span>') +
+        D('font-size:12.5px;line-height:1.45;color:' + SOFT + ';padding-bottom:8px;border-bottom:1px solid ' + LINE,
+          'Cota base do condomínio: o valor pode variar. ' + TEXTO_COND);
     }
-    var garTxt = '';
-    if(d.garMostrar && (d.garSeguro || d.garTitulo)){
-      garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:' + SOFT,
-        (d.garSeguro ? '<div>• <b style="font-weight:600;color:' + NAVY + '">Seguro Fiança:</b> ' + esc(d.garSeguro) + '</div>' : '') +
-        ((d.garSeguro && d.garTitulo) ? D('font-size:13px;font-weight:700;color:' + NAVY, '• OU') : '') +
-        (d.garTitulo ? '<div>• <b style="font-weight:600;color:' + NAVY + '">Título de Capitalização:</b> ' + esc(d.garTitulo) + '</div>' : ''));
-    }
+
+    var semFianca = !isFinite(f.val)
+      ? D('margin-top:8px;font-size:12.5px;color:' + SOFT + ';line-height:1.4', 'O Seguro Fiança será definido após a análise e não está incluído no total.')
+      : '';
+
+    /* Direita: só condições da locação (editáveis) */
+    var extras = d.condExtra.map(function(t){ return '<div>• ' + esc(t) + '</div>'; }).join('');
+    var condicoes = D('border:1.5px solid ' + NAVY + ';padding:12px 18px;display:flex;flex-direction:column;gap:6px',
+      D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY, 'CONDIÇÕES DA LOCAÇÃO') +
+      D(SERIF + ';font-weight:700;font-size:30px;color:' + NAVY + ';line-height:1.1', 'Contrato de ' + d.prazo + ' meses') +
+      (extras ? D('font-size:13px;line-height:1.45;color:' + SOFT + ';display:flex;flex-direction:column;gap:3px', extras) : ''));
+
+    var nomeSeg = '<b style="font-weight:600;color:' + NAVY + '">Seguro Fiança' + (d.garMostrar && d.garSeguro ? ':</b> ' + esc(d.garSeguro) : '</b>');
+    var nomeTit = '<b style="font-weight:600;color:' + NAVY + '">Título de Capitalização' + (d.garMostrar && d.garTitulo ? ':</b> ' + esc(d.garTitulo) : '</b>');
+    var garTxt = D('display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:' + SOFT,
+      '<div>• ' + nomeSeg + '</div>' + D('font-size:13px;font-weight:700;color:' + NAVY, '• OU') + '<div>• ' + nomeTit + '</div>');
     var garantias = D('display:flex;flex-direction:column;gap:10px;flex:none',
       D('background:' + GOLDF + ';color:' + NAVY + ';padding:14px 18px;display:flex;flex-direction:column;gap:4px',
-        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">GARANTIAS LOCATÍCIAS</span>' +
-        '<span style="font-weight:600;font-size:15px">' + (d.segFianca ? 'Seguro Fiança aprovado: ' + esc(d.segFianca) : 'Seguro Fiança de 10% a 15%') + '</span>') +
+        '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">MODALIDADES DE GARANTIA LOCATÍCIA</span>' +
+        '<span style="font-weight:600;font-size:14px">Uma modalidade OU a outra, não as duas.</span>') +
       garTxt);
-    var right = D('flex:1.12;min-width:0;display:flex;flex-direction:column;gap:14px', condBox + garantias);
+    var right = D('flex:1.12;min-width:0;display:flex;flex-direction:column;gap:14px', condicoes + garantias);
 
     var consultorLn = (d.mostrarConsultor && d.consultor)
-      ? D('margin-top:4px;font-size:13px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Consultor(a):</b> ' + esc(d.consultor))
+      ? D('margin-top:8px;font-size:13px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Consultor(a):</b> ' + esc(d.consultor))
       : '';
 
     var left = D('flex:1;min-width:0;display:flex;flex-direction:column',
       D('font-size:12px;font-weight:600;letter-spacing:0.16em;color:' + NAVY + ';padding-bottom:8px;border-bottom:2px solid ' + GOLD + ';margin-bottom:2px', 'VALORES MENSAIS') + rows +
       D('display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:14px 18px;background:' + NAVY + ';color:#FFFFFF',
         '<span style="font-size:12px;font-weight:600;letter-spacing:0.16em">TOTAL</span><span style="' + SERIF + ';font-weight:700;font-size:32px;color:' + GOLDL + ';font-variant-numeric:tabular-nums">' + money(c.total) + '</span>') +
-      D('margin-top:8px;font-size:13px;color:' + SOFT + ';line-height:1.4', '<b style="font-weight:600;color:' + NAVY + '">Observação:</b> Contrato de ' + d.prazo + ' meses.') +
-      consultorLn);
+      semFianca + consultorLn);
 
     return '<div id="sheet" style="width:' + CARD_W + 'px;background:' + IVORY + ';padding:30px 34px 26px;box-sizing:border-box;' + SANS + ';color:' + INK + '">' +
       (d.tituloImovel ? D(SERIF + ';font-weight:700;font-size:28px;line-height:1.2;color:' + NAVY + ';padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid ' + GOLD, esc(d.tituloImovel)) : '') +
@@ -327,7 +363,7 @@ button:disabled{opacity:0.6;cursor:progress}
       '<span>Fundo de conservação (5%)</span><b>' + money(c.fundo) + '</b>' +
       '<span>Seguro incêndio (2,5%)</span><b>' + money(c.seguro) + '</b>' +
       '<span>Taxas bancárias</span><b>' + money(TAXA_BANCARIA) + '</b>' +
-      '<div class="tot"><span>Total (aluguel + taxas)</span><span>' + money(c.total) + '</span></div>';
+      '<div class="tot"><span>Total (inclui Seguro Fiança e condomínio, se informados)</span><span>' + money(c.total) + '</span></div>';
     $('sheetHost').innerHTML = card(d);
     fit();
   }
@@ -531,20 +567,20 @@ button:disabled{opacity:0.6;cursor:progress}
     L.push('Fundo de conservação (5%): ' + brl(c.fundo));
     L.push('Seguro incêndio (2,5%): ' + brl(c.seguro));
     L.push('Taxas bancárias: ' + brl(TAXA_BANCARIA));
+    var fz = c.fianca;
+    if(isFinite(fz.val)) L.push('Seguro Fiança' + (isFinite(fz.pct) ? ' (' + fmt(fz.pct).replace(/,00$/, '') + '% do aluguel)' : '') + ': ' + brl(fz.val));
+    else L.push('Seguro Fiança: ' + (fz.txt || '10% a 15% do aluguel') + ' (definido após análise, não incluído no total)');
+    if(isFinite(d.cond) && d.cond > 0) L.push('Cota do condomínio (valor base, pode variar): ' + brl(d.cond) + ' (' + TEXTO_COND.replace(/\.$/, '') + ')');
     L.push('');
     L.push('*Total:* ' + brl(c.total));
-    if(isFinite(d.cond) && d.cond > 0){
-      L.push('');
-      L.push('-----');
-      L.push('+ Cota do condomínio: ' + brl(d.cond) + ' (' + TEXTO_COND.replace(/\.$/, '') + ')');
-      L.push('-----');
-    }
     if(d.link){ L.push(''); L.push('Ver o imóvel online: ' + d.link); }
     L.push('');
-    L.push('Observação: Contrato de ' + d.prazo + ' meses.');
+    L.push('*Condições da locação:*');
+    L.push('* Contrato de ' + d.prazo + ' meses;');
+    d.condExtra.forEach(function(t){ L.push('* ' + t + ';'); });
     L.push('');
-    L.push('Trabalhamos com duas modalidades de garantia para locação (uma OU a outra, não as duas):');
-    L.push('* Seguro Fiança' + (d.segFianca ? ' (aprovado: ' + d.segFianca + ')' : ' (10% a 15%)') + ';');
+    L.push('Modalidades de garantia locatícia (uma OU a outra, não as duas):');
+    L.push('* Seguro Fiança;');
     L.push('OU');
     L.push('* Título de Capitalização;');
     L.push('');
@@ -571,7 +607,7 @@ button:disabled{opacity:0.6;cursor:progress}
 
   /* ---------- Limpar (o perfil do consultor é mantido) ---------- */
   function limpar(){
-    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','segFianca','tituloImovel'].forEach(function(id){ $(id).value = ''; });
+    ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','segFianca','tituloImovel','condExtra'].forEach(function(id){ $(id).value = ''; });
     $('prazo').value = '30';
     $('tipo').value = '';
     $('tipoOutroBox').hidden = true;
@@ -600,7 +636,7 @@ button:disabled{opacity:0.6;cursor:progress}
   $('garMostrar').addEventListener('change', function(e){ perfil.garMostrar = e.target.checked; savePerfil(); schedule(); });
   $('garSeguro').addEventListener('input', function(e){ perfil.garSeguro = e.target.value; savePerfil(); schedule(); });
   $('garTitulo').addEventListener('input', function(e){ perfil.garTitulo = e.target.value; savePerfil(); schedule(); });
-  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo','segFianca','tituloImovel'].forEach(function(id){
+  ['codigo','empreendimento','bairro','link','area','quartos','suites','vagas','aluguel','iptu','cond','tipoOutro','prazo','segFianca','tituloImovel','condExtra'].forEach(function(id){
     $(id).addEventListener('input', schedule);
   });
   ['aluguel','iptu','cond'].forEach(function(id){
